@@ -64,5 +64,5 @@ pnpm build
 ## Getting help
 
 1. Review [FAQ](faq.md) and [Best practices](best-practices.md).
-2. Search [GitHub issues](https://github.com/shivamongit/new/issues).
+2. Search [GitHub issues](https://github.com/shivamongit/novadock/issues).
 3. Open a bug report with deploy logs, settings (redact secrets), and host OS version.

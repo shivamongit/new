@@ -44,6 +44,6 @@ Not yet. Use the API or web console. See [CLI](cli.md) for the roadmap.
 
 SQLite by default, suitable for single-node deployments. PostgreSQL support is planned for multi-instance control planes.
 
-## How do I rename the GitHub repository?
+## Repository
 
-In GitHub: **Settings → General → Repository name → `novadock`**.
+This project is published as **[github.com/shivamongit/novadock](https://github.com/shivamongit/novadock)**.

@@ -5,7 +5,7 @@ Thank you for helping improve NovaDock. We welcome contributions that strengthen
 ## Before you start
 
 - Read the [documentation](docs/README.md) to understand platform boundaries.
-- Check [open issues](https://github.com/shivamongit/new/issues) and existing pull requests.
+- Check [open issues](https://github.com/shivamongit/novadock/issues) and existing pull requests.
 - For large changes, open an issue first to align on scope.
 
 ## Development setup
