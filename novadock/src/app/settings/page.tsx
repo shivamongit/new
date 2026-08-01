@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AppShell } from "@/components/layout/app-shell";
+import { StitchAppShell } from "@/components/stitch/app-shell";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <AppShell>
+    <StitchAppShell>
       <div>
         <h1 className="text-3xl font-semibold tracking-tight text-white">
           Settings
@@ -102,6 +102,6 @@ export default function SettingsPage() {
           </Button>
         </CardContent>
       </Card>
-    </AppShell>
+    </StitchAppShell>
   );
 }

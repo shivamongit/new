@@ -1,15 +1,10 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Plus, ArrowUpRight, Server, CheckCircle2, AlertCircle } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatusBadge } from "@/components/status-badge";
+import { StitchAppShell } from "@/components/stitch/app-shell";
+import { OrbitalGraphic } from "@/components/stitch/orbital-graphic";
+import { MaterialIcon } from "@/components/stitch/material-icon";
 import { getDashboardStats, listApplications } from "@/lib/apps-service";
 import type { AppStatus } from "@/lib/types";
-import { DeployHeroGraphic } from "@/components/graphics/deploy-hero";
-import { EmptyStateGraphic } from "@/components/graphics/deploy-hero";
-import { DashboardMotion } from "./dashboard-motion";
 
 export default async function DashboardPage() {
   const [stats, apps] = await Promise.all([
@@ -18,157 +13,260 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <AppShell>
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex-1">
-          <DashboardMotion>
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-              </span>
-              Windows POC platform
-            </div>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white">
-              Your POCs,{" "}
-              <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                live in seconds
-              </span>
-            </h1>
-            <p className="mt-3 max-w-lg text-zinc-400 leading-relaxed">
-              NovaDock turns POC folders into self-healing Windows services with
-              one click — NSSM, health checks, and loop-engineered deploys.
-            </p>
-            <Button className="mt-6 shadow-lg shadow-cyan-500/20" asChild>
-              <Link href="/apps/new">
-                <Plus className="h-4 w-4" />
-                Deploy application
-              </Link>
-            </Button>
-          </DashboardMotion>
+    <StitchAppShell>
+      <section className="mb-10 grid min-h-[320px] grid-cols-12 items-center gap-6">
+        <div className="col-span-12 lg:col-span-7">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#00f5ff]/20 bg-[#00f5ff]/10 px-3 py-1 text-xs font-medium text-[#00dce5]">
+            <span className="pulse-running h-2 w-2 rounded-full bg-[#00f5ff]" />
+            Windows POC platform
+          </div>
+          <h1
+            className="mb-6 bg-gradient-to-r from-[#00f5ff] via-[#571bc1] to-[#d0bcff] bg-clip-text text-4xl font-bold leading-tight tracking-tight text-transparent md:text-5xl"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Your POCs, live in seconds.
+          </h1>
+          <p className="mb-8 max-w-xl text-base leading-relaxed text-[#b9caca]">
+            NovaDock turns POC folders into self-healing Windows services with
+            one click — NSSM, health checks, and loop-engineered deploys.
+          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/apps/new"
+              className="cyan-glow rounded-xl bg-[#00f5ff] px-8 py-3.5 font-bold text-[#006c71] transition-all hover:translate-y-[-2px]"
+            >
+              Deploy application
+            </Link>
+            <a
+              href="https://github.com"
+              className="rounded-xl border border-white/10 bg-white/5 px-8 py-3.5 font-bold backdrop-blur-md transition-all hover:bg-white/10"
+            >
+              Documentation
+            </a>
+          </div>
         </div>
-        <div className="hidden lg:block lg:w-[380px] opacity-90">
-          <DeployHeroGraphic />
+        <div className="relative col-span-12 min-h-[320px] lg:col-span-5">
+          <OrbitalGraphic />
         </div>
+      </section>
+
+      <div className="mb-10 grid grid-cols-2 gap-6 lg:grid-cols-4">
+        <KpiCard label="Total Apps" value={stats.total} icon="apps" />
+        <KpiCard
+          label="Running"
+          value={stats.running}
+          tone="green"
+          badge="HEALTHY"
+        />
+        <KpiCard
+          label="Deploying"
+          value={stats.deploying}
+          tone="amber"
+          badge="IN PROGRESS"
+          pulse
+        />
+        <KpiCard
+          label="Failed"
+          value={stats.failed}
+          tone="red"
+          badge="ATTENTION"
+        />
       </div>
 
-      <DashboardMotion delay={0.15}>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            label="Total applications"
-            value={stats.total}
-            icon={<Server className="h-4 w-4 text-cyan-400" />}
-          />
-          <StatCard
-            label="Running"
-            value={stats.running}
-            icon={<CheckCircle2 className="h-4 w-4 text-emerald-400" />}
-            accent="emerald"
-          />
-          <StatCard
-            label="Deploying"
-            value={stats.deploying}
-            icon={<ArrowUpRight className="h-4 w-4 text-amber-400" />}
-            accent="amber"
-          />
-          <StatCard
-            label="Failed"
-            value={stats.failed}
-            icon={<AlertCircle className="h-4 w-4 text-red-400" />}
-            accent="red"
-          />
+      <div className="glass-card overflow-hidden rounded-2xl">
+        <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
+          <h2
+            className="text-xl font-medium text-white"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Recent Applications
+          </h2>
+          <span className="text-xs text-[#b9caca]">{apps.length} total</span>
         </div>
-      </DashboardMotion>
-
-      <Card className="mt-8 border-cyan-500/10 bg-white/[0.02]">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Applications</CardTitle>
-          <span className="text-xs text-zinc-500">{apps.length} total</span>
-        </CardHeader>
-        <CardContent>
-          {apps.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <EmptyStateGraphic />
-              <h3 className="mt-6 text-lg font-medium text-white">
-                No applications yet
-              </h3>
-              <p className="mt-2 max-w-sm text-sm text-zinc-400">
-                Deploy your first POC in one click. NovaDock registers NSSM,
-                starts the service, and verifies health automatically.
-              </p>
-              <Button className="mt-6" asChild>
-                <Link href="/apps/new">Deploy your first app</Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {apps.map((app, i) => (
-                <Link
-                  key={app.id}
-                  href={`/apps/${app.id}`}
-                  className="group flex items-center justify-between rounded-xl border border-transparent px-4 py-4 transition-all hover:border-cyan-500/20 hover:bg-cyan-500/[0.04]"
-                  style={{ animationDelay: `${i * 50}ms` }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500/20 to-violet-600/20 border border-white/10 text-xs font-bold text-cyan-300 group-hover:shadow-lg group-hover:shadow-cyan-500/10 transition-shadow">
-                      {app.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-medium text-white group-hover:text-cyan-200 transition-colors">
-                        {app.name}
-                      </p>
-                      <p className="text-xs text-zinc-500">
-                        Port {app.port} · {app.template} ·{" "}
-                        {formatDistanceToNow(app.updatedAt, { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatusBadge status={app.status as AppStatus} />
-                    <ArrowUpRight className="h-4 w-4 text-zinc-600 group-hover:text-cyan-400 transition-colors" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </AppShell>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="bg-white/[0.02]">
+                {["Application", "Status", "Port", "Last updated", ""].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#b9caca]"
+                    >
+                      {h}
+                    </th>
+                  ),
+                )}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {apps.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-6 py-16 text-center text-[#b9caca]"
+                  >
+                    No applications yet.{" "}
+                    <Link
+                      href="/apps/new"
+                      className="text-[#00dce5] hover:underline"
+                    >
+                      Deploy your first POC
+                    </Link>
+                  </td>
+                </tr>
+              ) : (
+                apps.map((app) => (
+                  <tr
+                    key={app.id}
+                    className="group transition-colors hover:bg-white/[0.02]"
+                  >
+                    <td className="px-6 py-5">
+                      <Link
+                        href={`/apps/${app.id}`}
+                        className="flex items-center gap-3"
+                      >
+                        <div
+                          className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-cyan-500/20 to-violet-500/20 text-sm font-bold text-[#63f7ff]"
+                        >
+                          {app.name.slice(0, 1).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium text-white transition-colors group-hover:text-[#00dce5]">
+                            {app.name}
+                          </div>
+                          <div className="font-mono text-xs text-[#b9caca]">
+                            {app.template} · {app.slug}
+                          </div>
+                        </div>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-5">
+                      <StatusRow status={app.status as AppStatus} />
+                    </td>
+                    <td className="px-6 py-5 font-mono text-sm text-[#b9caca]">
+                      {app.port}
+                    </td>
+                    <td className="px-6 py-5 text-sm text-[#b9caca]">
+                      {formatDistanceToNow(app.updatedAt, {
+                        addSuffix: true,
+                      })}
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <Link href={`/apps/${app.id}`}>
+                        <MaterialIcon
+                          name="arrow_forward"
+                          className="text-[#b9caca] transition-colors group-hover:text-white"
+                        />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </StitchAppShell>
   );
 }
 
-function StatCard({
+function KpiCard({
   label,
   value,
   icon,
-  accent,
+  tone,
+  badge,
+  pulse,
 }: {
   label: string;
   value: number;
-  icon: React.ReactNode;
-  accent?: string;
+  icon?: string;
+  tone?: "green" | "amber" | "red";
+  badge?: string;
+  pulse?: boolean;
 }) {
+  const dot =
+    tone === "green"
+      ? "bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]"
+      : tone === "amber"
+        ? "bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+        : tone === "red"
+          ? "bg-[#ffb4ab] shadow-[0_0_8px_rgba(255,180,171,0.5)]"
+          : "";
+
   return (
-    <Card className="overflow-hidden border-white/[0.06] hover:border-cyan-500/20 transition-colors group">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-zinc-400">{label}</p>
-          <div className="group-hover:scale-110 transition-transform">{icon}</div>
-        </div>
-        <p
-          className={`mt-3 text-3xl font-semibold tracking-tight ${
-            accent === "emerald"
-              ? "text-emerald-400"
-              : accent === "amber"
-                ? "text-amber-400"
-                : accent === "red"
-                  ? "text-red-400"
-                  : "text-white"
+    <div className="glass-card group relative overflow-hidden rounded-2xl p-4">
+      {tone && (
+        <div
+          className={`absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 ${
+            tone === "green"
+              ? "bg-green-500/5"
+              : tone === "amber"
+                ? "bg-amber-500/5"
+                : "bg-red-500/5"
+          }`}
+        />
+      )}
+      <div className="mb-2 flex items-start justify-between">
+        <span className="text-xs font-medium uppercase tracking-wider text-[#b9caca]">
+          {label}
+        </span>
+        {icon ? (
+          <MaterialIcon name={icon} className="text-[#b9caca]" />
+        ) : dot ? (
+          <span className={`h-2 w-2 rounded-full ${dot}`} />
+        ) : null}
+      </div>
+      <div
+        className="text-[32px] font-semibold text-white"
+        style={{ fontFamily: "var(--font-space-grotesk)" }}
+      >
+        {value}
+      </div>
+      {badge && (
+        <div
+          className={`mt-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${
+            tone === "green"
+              ? "border-green-500/20 bg-green-500/10 text-green-400"
+              : tone === "amber"
+                ? "border-amber-500/20 bg-amber-500/10 text-amber-400"
+                : "border-red-500/20 bg-red-500/10 text-[#ffb4ab]"
           }`}
         >
-          {value}
-        </p>
-      </CardContent>
-    </Card>
+          {pulse && (
+            <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
+          )}
+          {badge}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatusRow({ status }: { status: AppStatus }) {
+  const map: Record<
+    AppStatus,
+    { label: string; dot: string; pulse?: boolean }
+  > = {
+    RUNNING: {
+      label: "Running",
+      dot: "bg-green-400 pulse-running",
+    },
+    DEPLOYING: {
+      label: "Deploying",
+      dot: "bg-amber-400 animate-pulse",
+    },
+    FAILED: { label: "Failed", dot: "bg-[#ffb4ab]" },
+    STOPPED: { label: "Stopped", dot: "bg-[#849495]" },
+    PENDING: { label: "Pending", dot: "bg-[#849495]" },
+    UNHEALTHY: { label: "Unhealthy", dot: "bg-[#ffb4ab]" },
+  };
+  const s = map[status];
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`h-2 w-2 rounded-full ${s.dot}`} />
+      <span className="text-sm font-medium">{s.label}</span>
+    </div>
   );
 }

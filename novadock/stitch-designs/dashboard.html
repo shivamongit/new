@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NovaDock | Enterprise Cloud Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Geist:wght@100;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#3c0091",
+                    "secondary-fixed": "#e9ddff",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "surface-container-lowest": "#0e0e12",
+                    "primary": "#e9feff",
+                    "error": "#ffb4ab",
+                    "error-container": "#93000a",
+                    "tertiary-fixed-dim": "#e7c427",
+                    "tertiary-container": "#ffdb3f",
+                    "outline-variant": "#3a494a",
+                    "on-background": "#e5e1e7",
+                    "surface-container": "#1f1f23",
+                    "primary-container": "#00f5ff",
+                    "on-primary-fixed": "#002021",
+                    "surface-dim": "#131317",
+                    "surface-variant": "#353439",
+                    "tertiary-fixed": "#ffe16c",
+                    "on-secondary-container": "#c4abff",
+                    "surface-container-high": "#2a292e",
+                    "surface-bright": "#39393d",
+                    "inverse-on-surface": "#303034",
+                    "on-primary": "#003739",
+                    "secondary": "#d0bcff",
+                    "on-tertiary-container": "#736000",
+                    "on-surface-variant": "#b9caca",
+                    "on-primary-fixed-variant": "#004f53",
+                    "surface-container-highest": "#353439",
+                    "secondary-container": "#571bc1",
+                    "primary-fixed-dim": "#00dce5",
+                    "inverse-surface": "#e5e1e7",
+                    "outline": "#849495",
+                    "on-tertiary-fixed": "#221b00",
+                    "primary-fixed": "#63f7ff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface": "#131317",
+                    "surface-container-low": "#1b1b1f",
+                    "on-surface": "#e5e1e7",
+                    "on-primary-container": "#006c71",
+                    "on-secondary-fixed": "#23005c",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#fff9f0",
+                    "inverse-primary": "#00696e",
+                    "on-tertiary": "#3a3000",
+                    "surface-tint": "#00dce5",
+                    "on-tertiary-fixed-variant": "#544600",
+                    "background": "#131317",
+                    "on-error": "#690005"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit-lg": "24px",
+                    "unit-xs": "4px",
+                    "margin-page": "32px",
+                    "unit-xl": "40px",
+                    "sidebar-width": "260px",
+                    "unit-md": "16px",
+                    "gutter": "24px",
+                    "container-max": "1440px",
+                    "unit-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Space Grotesk"],
+                    "mono-code": ["Geist"],
+                    "headline-lg": ["Space Grotesk"],
+                    "display-lg": ["Space Grotesk"],
+                    "label-sm": ["Geist"],
+                    "body-lg": ["Geist"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "mono-code": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #050508;
+            color: #e5e1e7;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .cyan-glow {
+            box-shadow: 0 0 20px -5px rgba(0, 220, 229, 0.3);
+        }
+        .pulse-running { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary-container/30">
+<!-- Aurora Background Shader -->
+<!-- STITCH_SHADER_START:ANIMATION_2 class="fixed inset-0 w-full h-full -z-10 opacity-40" -->
+<div class="fixed inset-0 w-full h-full -z-10 opacity-40" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_2" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_2');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+    float time = u_time * 0.2;
+    
+    // Aurora-like movement
+    float n = 0.0;
+    vec2 p = uv * 2.0 - 1.0;
+    p.x *= u_resolution.x / u_resolution.y;
+    
+    // Layered sine waves for fluid motion
+    for(float i = 1.0; i < 4.0; i++) {
+        p.x += 0.3 / i * sin(i * 3.0 * p.y + time + i * 0.5);
+        p.y += 0.3 / i * cos(i * 3.0 * p.x + time + i * 0.8);
+    }
+    
+    float mask = smoothstep(0.8, 0.2, uv.y); // Fade out towards top/bottom
+    
+    // Color palette from design system (Cyan to Violet)
+    vec3 color1 = vec3(0.0, 0.96, 1.0); // Cyan
+    vec3 color2 = vec3(0.54, 0.36, 0.96); // Violet
+    
+    vec3 finalColor = mix(color1, color2, uv.x + sin(time) * 0.5);
+    finalColor *= 0.15 * mask; // Keep it subtle and "expensive"
+    
+    // Background base
+    vec3 bg = vec3(0.02, 0.02, 0.03); 
+    
+    gl_FragColor = vec4(bg + finalColor, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_2 -->
+<!-- SideNavBar (Shared Component Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container/70 dark:bg-surface-container-lowest/70 backdrop-blur-xl border-r border-white/10 flex flex-col p-unit-md z-50">
+<div class="flex flex-col gap-unit-sm mb-unit-xl">
+<div class="flex items-center gap-3 px-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md font-bold text-primary-fixed tracking-tight">NovaDock</span>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-medium">Enterprise Cloud</span>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<!-- Active: Dashboard -->
+<a class="flex items-center gap-3 px-unit-md py-3 text-primary-fixed-dim font-bold bg-secondary-container/30 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-unit-md py-3 text-on-surface-variant font-medium hover:bg-surface-variant/50 transition-colors duration-200 rounded-xl active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">rocket_launch</span>
+<span>Deployments</span>
+</a>
+<a class="flex items-center gap-3 px-unit-md py-3 text-on-surface-variant font-medium hover:bg-surface-variant/50 transition-colors duration-200 rounded-xl active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">layers</span>
+<span>Infrastructure</span>
+</a>
+<a class="flex items-center gap-3 px-unit-md py-3 text-on-surface-variant font-medium hover:bg-surface-variant/50 transition-colors duration-200 rounded-xl active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-unit-md py-3 text-on-surface-variant font-medium hover:bg-surface-variant/50 transition-colors duration-200 rounded-xl active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 border-t border-white/5 pt-unit-md">
+<button class="mb-unit-md py-3 px-4 bg-primary-container text-on-primary-container font-bold rounded-xl flex items-center justify-center gap-2 cyan-glow active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add</span>
+                Deploy
+            </button>
+<a class="flex items-center gap-3 px-unit-md py-2 text-on-surface-variant font-medium hover:bg-surface-variant/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-unit-md py-2 text-on-surface-variant font-medium hover:bg-surface-variant/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span>Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar (Shared Component Anchor) -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-background/50 backdrop-blur-md border-b border-white/5 flex justify-between items-center px-unit-lg z-40">
+<div class="flex items-center gap-unit-md w-1/2">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md">search</span>
+<input class="w-full bg-surface-container-low/50 border border-white/10 rounded-full py-1.5 pl-10 pr-4 text-label-sm focus:outline-none focus:border-primary-fixed-dim focus:ring-1 focus:ring-primary-fixed-dim/30 transition-all" placeholder="Search infrastructure..." type="text"/>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-lg border border-white/5 font-mono-code text-[11px] text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">find_replace</span>
+<span>K</span>
+</div>
+</div>
+<div class="flex items-center gap-unit-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed transition-colors cursor-pointer">notifications</button>
+<div class="h-8 w-8 rounded-full border border-white/20 overflow-hidden cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a software engineer in a clean, high-tech studio environment. The lighting is moody with subtle cyan and violet rim lights that match the NovaDock brand identity. The background is a dark, out-of-focus server room with soft blue indicator lights. Minimalist and cinematic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdTAvKzXFlIb3asiFvE-bFTvCVLP6qZdX8_zu-Zcld3P-AzCabybJPrcF3Z_-_mrMdqZzRuisxI9HAb0n3TAbLZkATcBud6gTSJLeqyG_i8eleVCS-wWmgZwihinLarHsekZqv0jrMOCNNMiDHCsL_WDYXU8ovNpCjaO7CLiQlnACGhzMd7Pk0J8qLcIGFXSg5gbKSW3XJGjglpz8XjJuLd8yeIGZHpNwShyEBVeWOzaa8tEwAtWSJsL1ez4gI2gJGFPUweAfOyaY"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="pt-24 px-margin-page pb-unit-xl max-w-container-max mx-auto w-full">
+<!-- Hero Section -->
+<section class="grid grid-cols-12 gap-gutter items-center mb-unit-xl min-h-[320px]">
+<div class="col-span-7">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/10 border border-primary-container/20 text-primary-fixed-dim text-label-sm font-medium mb-6">
+<span class="w-2 h-2 rounded-full bg-primary-container pulse-running"></span>
+                        V3.0 Now Live
+                    </div>
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary-container via-secondary-container to-secondary text-transparent bg-clip-text mb-6 leading-tight">
+                        Your POCs, live in seconds.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-8 leading-relaxed">
+                        The unified platform for deploying containerized applications without the infrastructure overhead. Scale from prototype to production with zero friction.
+                    </p>
+<div class="flex items-center gap-unit-md">
+<button class="px-8 py-3.5 bg-primary-container text-on-primary-container font-bold rounded-xl cyan-glow hover:translate-y-[-2px] transition-all">Start Project</button>
+<button class="px-8 py-3.5 border border-white/10 bg-white/5 backdrop-blur-md rounded-xl font-bold hover:bg-white/10 transition-all">Documentation</button>
+</div>
+</div>
+<div class="col-span-5 relative h-full min-h-[400px]">
+<!-- STITCH_THREEJS_START:ANIMATION_3 class="absolute inset-0 w-full h-full scale-125" -->
+<div class="absolute inset-0 w-full h-full scale-125" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_3" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_3');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+renderer.setSize(width, height);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Orbital group
+const group = new THREE.Group();
+scene.add(group);
+
+// Central sphere (The Platform)
+const coreGeom = new THREE.SphereGeometry(0.5, 32, 32);
+const coreMat = new THREE.MeshPhongMaterial({ 
+    color: 0x00f5ff, 
+    emissive: 0x00f5ff, 
+    emissiveIntensity: 0.5,
+    shininess: 100 
+});
+const core = new THREE.Mesh(coreGeom, coreMat);
+group.add(core);
+
+// Orbital rings
+const createRing = (radius, color, rotationX, rotationY) => {
+    const ringGeom = new THREE.TorusGeometry(radius, 0.01, 16, 100);
+    const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.4 });
+    const ring = new THREE.Mesh(ringGeom, ringMat);
+    ring.rotation.x = rotationX;
+    ring.rotation.y = rotationY;
+    group.add(ring);
+    return ring;
+};
+
+const ring1 = createRing(1.2, 0x00f5ff, Math.PI / 2, 0.2);
+const ring2 = createRing(1.5, 0x8b5cf6, 0.5, Math.PI / 4);
+const ring3 = createRing(1.8, 0x39393d, -0.3, 0.1);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0x00f5ff, 2);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+camera.position.z = 4;
+
+function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.005;
+    group.rotation.x += 0.002;
+    
+    ring1.rotation.z += 0.01;
+    ring2.rotation.z -= 0.008;
+    ring3.rotation.z += 0.005;
+    
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+});
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_3 -->
+</div>
+</section>
+<!-- KPI Cards -->
+<div class="grid grid-cols-4 gap-gutter mb-unit-xl">
+<!-- Total Apps -->
+<div class="glass-card p-unit-md rounded-2xl">
+<div class="flex justify-between items-start mb-unit-sm">
+<span class="text-on-surface-variant text-label-sm font-medium uppercase tracking-wider">Total Apps</span>
+<span class="material-symbols-outlined text-on-surface-variant">apps</span>
+</div>
+<div class="text-[32px] font-headline-lg text-white">12</div>
+<div class="text-xs text-on-surface-variant mt-1">+2 from last month</div>
+</div>
+<!-- Running -->
+<div class="glass-card p-unit-md rounded-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-unit-sm">
+<span class="text-on-surface-variant text-label-sm font-medium uppercase tracking-wider">Running</span>
+<span class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]"></span>
+</div>
+<div class="text-[32px] font-headline-lg text-white">8</div>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold mt-2 border border-green-500/20">HEALTHY</div>
+</div>
+<!-- Deploying -->
+<div class="glass-card p-unit-md rounded-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-unit-sm">
+<span class="text-on-surface-variant text-label-sm font-medium uppercase tracking-wider">Deploying</span>
+<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
+</div>
+<div class="text-[32px] font-headline-lg text-white">3</div>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold mt-2 border border-amber-500/20">IN PROGRESS</div>
+</div>
+<!-- Failed -->
+<div class="glass-card p-unit-md rounded-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-unit-sm">
+<span class="text-on-surface-variant text-label-sm font-medium uppercase tracking-wider">Failed</span>
+<span class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_rgba(255,180,171,0.5)]"></span>
+</div>
+<div class="text-[32px] font-headline-lg text-white">1</div>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/10 text-error text-[10px] font-bold mt-2 border border-error/20">ATTENTION REQ</div>
+</div>
+</div>
+<!-- Main Table Section -->
+<div class="glass-card rounded-2xl overflow-hidden">
+<div class="px-unit-lg py-unit-md border-b border-white/5 flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md text-white">Recent Applications</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 bg-surface-variant/50 text-label-sm rounded-lg hover:bg-surface-variant transition-colors border border-white/5">Filter</button>
+<button class="px-3 py-1.5 bg-surface-variant/50 text-label-sm rounded-lg hover:bg-surface-variant transition-colors border border-white/5">Export</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/[0.02]">
+<th class="px-unit-lg py-4 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Application</th>
+<th class="px-unit-lg py-4 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Status</th>
+<th class="px-unit-lg py-4 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Port</th>
+<th class="px-unit-lg py-4 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Last Deployed</th>
+<th class="px-unit-lg py-4 text-label-sm text-on-surface-variant font-bold uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- App Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-white/10 flex items-center justify-center font-bold text-primary-fixed">N</div>
+<div>
+<div class="font-medium text-white group-hover:text-primary-fixed-dim transition-colors">NovaCore-API</div>
+<div class="text-xs text-on-surface-variant font-mono-code">v2.4.12</div>
+</div>
+</div>
+</td>
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-400 pulse-running"></span>
+<span class="text-sm font-medium">Running</span>
+</div>
+</td>
+<td class="px-unit-lg py-5 font-mono-code text-on-surface-variant text-sm">3000</td>
+<td class="px-unit-lg py-5 text-on-surface-variant text-sm">2 mins ago</td>
+<td class="px-unit-lg py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</td>
+</tr>
+<!-- App Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-white/10 flex items-center justify-center font-bold text-white">S</div>
+<div>
+<div class="font-medium text-white group-hover:text-primary-fixed-dim transition-colors">Storefront-Next</div>
+<div class="text-xs text-on-surface-variant font-mono-code">canary-3</div>
+</div>
+</div>
+</td>
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+<span class="text-sm font-medium">Deploying</span>
+</div>
+</td>
+<td class="px-unit-lg py-5 font-mono-code text-on-surface-variant text-sm">8080</td>
+<td class="px-unit-lg py-5 text-on-surface-variant text-sm">45 mins ago</td>
+<td class="px-unit-lg py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</td>
+</tr>
+<!-- App Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-teal-500/20 border border-white/10 flex items-center justify-center font-bold text-white">D</div>
+<div>
+<div class="font-medium text-white group-hover:text-primary-fixed-dim transition-colors">DataWorker-Go</div>
+<div class="text-xs text-on-surface-variant font-mono-code">main-b72a</div>
+</div>
+</div>
+</td>
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-400 pulse-running"></span>
+<span class="text-sm font-medium">Running</span>
+</div>
+</td>
+<td class="px-unit-lg py-5 font-mono-code text-on-surface-variant text-sm">9001</td>
+<td class="px-unit-lg py-5 text-on-surface-variant text-sm">3 hours ago</td>
+<td class="px-unit-lg py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</td>
+</tr>
+<!-- App Row 4 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-red-500/20 border border-white/10 flex items-center justify-center font-bold text-white">A</div>
+<div>
+<div class="font-medium text-white group-hover:text-primary-fixed-dim transition-colors">AuthService-V2</div>
+<div class="text-xs text-on-surface-variant font-mono-code">v2.0.0-final</div>
+</div>
+</div>
+</td>
+<td class="px-unit-lg py-5">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-sm font-medium text-error">Failed</span>
+</div>
+</td>
+<td class="px-unit-lg py-5 font-mono-code text-on-surface-variant text-sm">443</td>
+<td class="px-unit-lg py-5 text-on-surface-variant text-sm">1 day ago</td>
+<td class="px-unit-lg py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Footer Stats / Asymmetric Grid -->
+<div class="mt-gutter grid grid-cols-3 gap-gutter">
+<div class="col-span-2 glass-card rounded-2xl p-unit-lg h-64 flex flex-col justify-center">
+<h3 class="text-on-surface-variant text-label-sm font-medium mb-4 uppercase">Infrastructure Load</h3>
+<div class="flex items-end gap-1.5 h-32">
+<!-- Tiny visual bar chart for loading state -->
+<div class="w-full bg-primary-container/20 rounded-t h-[40%] transition-all hover:h-[50%]"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[60%] transition-all hover:h-[70%]"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[35%] transition-all hover:h-[45%]"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[80%] transition-all hover:h-[90%]"></div>
+<div class="w-full bg-secondary-container/40 rounded-t h-[95%] transition-all hover:h-full"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[45%] transition-all hover:h-[55%]"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[30%] transition-all hover:h-[40%]"></div>
+<div class="w-full bg-primary-container/20 rounded-t h-[55%] transition-all hover:h-[65%]"></div>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-unit-lg flex flex-col items-center justify-center text-center">
+<div class="w-16 h-16 rounded-full border-2 border-primary-container/30 border-t-primary-container animate-spin mb-4"></div>
+<span class="text-label-sm text-on-surface-variant uppercase mb-1">Global Uptime</span>
+<span class="text-3xl font-headline-lg">99.99<span class="text-primary-fixed-dim">%</span></span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateX(4px)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateX(0px)';
+            });
+        });
+    </script>
+</body></html>

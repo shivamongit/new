@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,10 +12,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "NovaDock — Snap POCs to Windows",
   description:
-    "One-click POC deployment for Windows with loop-engineered NSSM services",
+    "Premium Windows POC deployment platform with loop-engineered NSSM automation",
 };
 
 export default function RootLayout({
@@ -26,9 +32,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} dark h-full`}
     >
-      <body className="min-h-full antialiased bg-[#06060a]">{children}</body>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-full antialiased bg-[#050508]">{children}</body>
     </html>
   );
 }

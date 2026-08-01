@@ -5,7 +5,7 @@ import {
   ArrowLeft,
   ExternalLink,
 } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
+import { StitchAppShell } from "@/components/stitch/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/status-badge";
@@ -27,7 +27,7 @@ export default async function AppDetailPage({
     app.healthUrl ?? `http://127.0.0.1:${app.port}/`;
 
   return (
-    <AppShell>
+    <StitchAppShell>
       <div className="flex items-start justify-between gap-4">
         <div>
           <Link
@@ -137,7 +137,7 @@ export default async function AppDetailPage({
           </Card>
         </div>
       </div>
-    </AppShell>
+    </StitchAppShell>
   );
 }
 
