@@ -66,6 +66,26 @@ Each deployment runs a bounded loop:
 4. **Health check** — HTTP probe with retry
 5. **Complete** or **halt** with reason
 
-## License
+## Design (Google Stitch)
 
-MIT
+UI is implemented from Stitch-generated designs (project `1486094693945406754`). Reference HTML lives in `stitch-designs/`.
+
+To connect Stitch MCP in Cursor, add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "stitch": {
+      "command": "npx",
+      "args": ["-y", "@_davideast/stitch-mcp", "proxy"],
+      "env": { "STITCH_API_KEY": "your-key" }
+    }
+  }
+}
+```
+
+## Test deployments
+
+```bash
+node scripts/test-deployments.mjs http://localhost:3000
+```
