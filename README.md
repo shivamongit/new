@@ -196,6 +196,7 @@ Full guide: [Deployment documentation](docs/deployment.md)
 | Guide | Description |
 |-------|-------------|
 | [Documentation hub](docs/README.md) | Index of all guides |
+| [Repository setup](docs/repository-setup.md) | Create or migrate to `shivamongit/novadock` |
 | [Architecture](docs/architecture.md) | Platform components |
 | [Deployment](docs/deployment.md) | End-to-end deploy flow |
 | [Configuration](docs/configuration.md) | Settings and environment |
