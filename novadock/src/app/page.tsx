@@ -39,7 +39,7 @@ export default async function DashboardPage() {
               Deploy application
             </Link>
             <a
-              href="https://github.com/shivamongit/new/blob/main/docs/README.md"
+              href="https://github.com/shivamongit/novadock/blob/main/docs/README.md"
               className="rounded-xl border border-white/10 bg-white/5 px-8 py-3.5 font-bold backdrop-blur-md transition-all hover:bg-white/10"
             >
               Documentation

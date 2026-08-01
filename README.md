@@ -158,8 +158,8 @@ Deep dive: [Architecture documentation](docs/architecture.md)
 ### Install and run
 
 ```bash
-git clone https://github.com/shivamongit/new.git
-cd new/novadock
+git clone https://github.com/shivamongit/novadock.git
+cd novadock/novadock
 pnpm install
 pnpm db:push
 pnpm dev
