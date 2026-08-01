@@ -29,7 +29,7 @@ export function Sidebar() {
           <p className="text-sm font-semibold text-white tracking-tight">
             NovaDock
           </p>
-          <p className="text-[11px] text-zinc-500">Snap POCs to Windows</p>
+          <p className="text-[11px] text-zinc-500">Windows deployment platform</p>
         </div>
       </div>
 
@@ -61,10 +61,10 @@ export function Sidebar() {
         <div className="rounded-xl border border-cyan-500/10 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 p-4">
           <div className="flex items-center gap-2 text-xs text-cyan-400/80">
             <Server className="h-3.5 w-3.5" />
-            Loop engineering
+            Intelligent orchestration
           </div>
           <p className="mt-2 text-xs leading-relaxed text-zinc-400">
-            Deploy → verify → retry until healthy. One-click NSSM magic.
+            Prepare, register, and verify until your service is healthy.
           </p>
           <div className="mt-3 flex items-center gap-1.5 text-[11px] text-emerald-400/80">
             <Activity className="h-3 w-3 animate-pulse" />

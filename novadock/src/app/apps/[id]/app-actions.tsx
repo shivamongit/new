@@ -16,7 +16,7 @@ export function AppActions({
   const router = useRouter();
 
   const redeploy = async () => {
-    toast.loading("Running deploy loop...");
+    toast.loading("Running deployment orchestration...");
     const res = await fetch(`/api/apps/${appId}/deploy`, { method: "POST" });
     toast.dismiss();
     if (res.ok) {
@@ -38,7 +38,7 @@ export function AppActions({
   };
 
   const deleteApp = async () => {
-    if (!confirm("Remove this application and its NSSM service?")) return;
+    if (!confirm("Remove this application and its Windows service?")) return;
     const res = await fetch(`/api/apps/${appId}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("Application removed");

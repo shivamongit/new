@@ -18,17 +18,18 @@ export default async function DashboardPage() {
         <div className="col-span-12 lg:col-span-7">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#00f5ff]/20 bg-[#00f5ff]/10 px-3 py-1 text-xs font-medium text-[#00dce5]">
             <span className="pulse-running h-2 w-2 rounded-full bg-[#00f5ff]" />
-            Windows POC platform
+            Windows application platform
           </div>
           <h1
             className="mb-6 bg-gradient-to-r from-[#00f5ff] via-[#571bc1] to-[#d0bcff] bg-clip-text text-4xl font-bold leading-tight tracking-tight text-transparent md:text-5xl"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Your POCs, live in seconds.
+            Ship applications with deployment confidence.
           </h1>
           <p className="mb-8 max-w-xl text-base leading-relaxed text-[#b9caca]">
-            NovaDock turns POC folders into self-healing Windows services with
-            one click — NSSM, health checks, and loop-engineered deploys.
+            NovaDock orchestrates Windows service deployments with health
+            verification, bounded retries, and full operational history—so
+            your team always knows what is running and why.
           </p>
           <div className="flex items-center gap-4">
             <Link
@@ -38,7 +39,7 @@ export default async function DashboardPage() {
               Deploy application
             </Link>
             <a
-              href="https://github.com"
+              href="https://github.com/shivamongit/new/blob/main/docs/README.md"
               className="rounded-xl border border-white/10 bg-white/5 px-8 py-3.5 font-bold backdrop-blur-md transition-all hover:bg-white/10"
             >
               Documentation
@@ -51,7 +52,7 @@ export default async function DashboardPage() {
       </section>
 
       <div className="mb-10 grid grid-cols-2 gap-6 lg:grid-cols-4">
-        <KpiCard label="Total Apps" value={stats.total} icon="apps" />
+        <KpiCard label="Total applications" value={stats.total} icon="apps" />
         <KpiCard
           label="Running"
           value={stats.running}
@@ -79,9 +80,9 @@ export default async function DashboardPage() {
             className="text-xl font-medium text-white"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Recent Applications
+            Application registry
           </h2>
-          <span className="text-xs text-[#b9caca]">{apps.length} total</span>
+          <span className="text-xs text-[#b9caca]">{apps.length} registered</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left">
@@ -106,12 +107,12 @@ export default async function DashboardPage() {
                     colSpan={5}
                     className="px-6 py-16 text-center text-[#b9caca]"
                   >
-                    No applications yet.{" "}
+                    No applications registered yet.{" "}
                     <Link
                       href="/apps/new"
                       className="text-[#00dce5] hover:underline"
                     >
-                      Deploy your first POC
+                      Deploy your first application
                     </Link>
                   </td>
                 </tr>
