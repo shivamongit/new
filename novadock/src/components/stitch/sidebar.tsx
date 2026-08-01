@@ -7,7 +7,7 @@ import { MaterialIcon } from "./material-icon";
 
 const nav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
-  { href: "/apps/new", label: "Deployments", icon: "rocket_launch" },
+  { href: "/apps/new", label: "New deployment", icon: "rocket_launch" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
@@ -33,7 +33,7 @@ export function StitchSidebar() {
               NovaDock
             </span>
             <span className="text-[10px] font-medium uppercase tracking-widest text-[#b9caca]">
-              Snap POCs to Windows
+              Windows deployment platform
             </span>
           </div>
         </div>
@@ -73,10 +73,10 @@ export function StitchSidebar() {
         <div className="rounded-xl border border-[#00f5ff]/10 bg-[#00f5ff]/5 p-3 text-xs text-[#b9caca]">
           <div className="flex items-center gap-2 text-[#00dce5]">
             <MaterialIcon name="sync" className="text-sm" />
-            Loop engineering
+            Intelligent orchestration
           </div>
           <p className="mt-2 leading-relaxed">
-            Deploy → verify → retry until healthy.
+            Prepare, register, verify—until your service is healthy.
           </p>
         </div>
       </div>

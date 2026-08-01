@@ -1,13 +1,13 @@
 /**
- * E2E test: create and deploy 4 POC applications via API.
+ * E2E smoke test: create and deploy four sample applications via API.
  * Usage: node scripts/test-deployments.mjs [baseUrl]
  */
 
 const BASE = process.argv[2] || "http://localhost:3000";
 
-const POCs = [
+const APPLICATIONS = [
   {
-    name: "Retail Analytics POC",
+    name: "Retail Analytics",
     template: "node",
     workDir: "C:\\NovaDock\\apps\\retail-analytics",
     command: "npm",
@@ -16,7 +16,7 @@ const POCs = [
     healthUrl: "http://127.0.0.1:3011/",
   },
   {
-    name: "Inventory API POC",
+    name: "Inventory API",
     template: "python",
     workDir: "C:\\NovaDock\\apps\\inventory-api",
     command: "python",
@@ -25,7 +25,7 @@ const POCs = [
     healthUrl: "http://127.0.0.1:3012/docs",
   },
   {
-    name: "Partner Portal POC",
+    name: "Partner Portal",
     template: "dotnet",
     workDir: "C:\\NovaDock\\apps\\partner-portal",
     command: "dotnet",
@@ -34,7 +34,7 @@ const POCs = [
     healthUrl: "http://127.0.0.1:3013/",
   },
   {
-    name: "Internal Tools POC",
+    name: "Internal Tools",
     template: "node",
     workDir: "C:\\NovaDock\\apps\\internal-tools",
     command: "npm",
@@ -45,19 +45,19 @@ const POCs = [
 ];
 
 async function main() {
-  console.log(`NovaDock deployment test → ${BASE}\n`);
+  console.log(`NovaDock deployment smoke test → ${BASE}\n`);
   const results = [];
 
-  for (const poc of POCs) {
-    process.stdout.write(`Creating ${poc.name}... `);
+  for (const appDef of APPLICATIONS) {
+    process.stdout.write(`Creating ${appDef.name}... `);
     const createRes = await fetch(`${BASE}/api/apps`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(poc),
+      body: JSON.stringify(appDef),
     });
     if (!createRes.ok) {
       console.log("FAIL create", await createRes.text());
-      results.push({ name: poc.name, ok: false });
+      results.push({ name: appDef.name, ok: false });
       continue;
     }
     const app = await createRes.json();
@@ -71,7 +71,7 @@ async function main() {
     const ok = deploy.success && detail.status === "RUNNING";
     console.log(ok ? "OK (RUNNING)" : `FAIL (${detail.status})`);
     results.push({
-      name: poc.name,
+      name: appDef.name,
       id: app.id,
       status: detail.status,
       ok,

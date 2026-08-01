@@ -13,7 +13,7 @@ export default function NewAppPage() {
   const [deploying, setDeploying] = useState(false);
   const [form, setForm] = useState({
     name: "",
-    workDir: "C:\\NovaDock\\apps\\my-poc",
+    workDir: "C:\\NovaDock\\apps\\my-application",
     command: "npm",
     arguments: "start",
     port: 3000,
@@ -78,8 +78,8 @@ export default function NewAppPage() {
           Deploy application
         </h1>
         <p className="mt-2 text-[#b9caca]">
-          One click — loop engineering handles install, NSSM, start, and health
-          verification.
+          Register your application and NovaDock will orchestrate service
+          registration, startup, and health verification.
         </p>
       </div>
 
@@ -128,7 +128,7 @@ export default function NewAppPage() {
               <Field label="Application name">
                 <input
                   className="input-dark w-full rounded px-4 py-2.5 text-sm"
-                  placeholder="Customer POC Dashboard"
+                  placeholder="Customer Analytics Dashboard"
                   value={form.name}
                   onChange={(e) =>
                     setForm({ ...form, name: e.target.value })
@@ -203,15 +203,15 @@ export default function NewAppPage() {
               <div className="flex items-center gap-2">
                 <MaterialIcon name="sync" className="text-[#00f5ff]" />
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-[#00f5ff]">
-                  NSSM verification loop
+                  Deployment orchestration
                 </h4>
               </div>
               <p className="text-sm leading-relaxed text-[#e5e1e7]">
-                NovaDock uses a{" "}
+                NovaDock runs a{" "}
                 <span className="font-medium text-[#00f5ff]">
-                  Deploy → Verify → Retry
+                  prepare → register → verify
                 </span>{" "}
-                loop until your POC is healthy on Windows.
+                pipeline with bounded retries until your application is healthy.
               </p>
               <div className="flex items-center justify-center gap-3 rounded-lg border border-white/5 bg-[#0e0e12]/50 py-6">
                 {["upload", "rule", "published_with_changes"].map((icon, i) => (
@@ -224,7 +224,8 @@ export default function NewAppPage() {
                 ))}
               </div>
               <p className="text-xs text-[#b9caca]">
-                Design generated via Google Stitch · project 1486094693945406754
+                Up to three verification attempts before a deploy halts with an
+                auditable reason.
               </p>
             </div>
           </div>

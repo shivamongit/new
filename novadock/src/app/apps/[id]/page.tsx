@@ -97,7 +97,7 @@ export default async function AppDetailPage({
               )}
               {app.lastError && (
                 <p className="mt-4 text-sm text-red-400">
-                  Halt reason: {app.lastError}
+                  Failure reason: {app.lastError}
                 </p>
               )}
             </CardContent>

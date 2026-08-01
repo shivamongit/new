@@ -9,19 +9,19 @@ async function main() {
     update: {},
   });
 
-  const demo = await prisma.application.upsert({
-    where: { slug: "demo-analytics" },
+  const sample = await prisma.application.upsert({
+    where: { slug: "analytics-platform" },
     create: {
-      name: "Demo Analytics POC",
-      slug: "demo-analytics",
-      description: "Sample POC for dashboard preview",
+      name: "Analytics Platform",
+      slug: "analytics-platform",
+      description: "Sample application for dashboard preview",
       template: "node",
-      workDir: "C:\\NovaDock\\apps\\demo-analytics",
+      workDir: "C:\\NovaDock\\apps\\analytics-platform",
       command: "npm",
       arguments: "start",
       port: 3001,
       healthUrl: "http://127.0.0.1:3001/",
-      serviceName: "NovaDock-demo-analytics",
+      serviceName: "NovaDock-analytics-platform",
       status: "RUNNING",
       pid: 4242,
       envVars: "{}",
@@ -29,7 +29,7 @@ async function main() {
     update: {},
   });
 
-  console.log("Seeded:", demo.name);
+  console.log("Seeded:", sample.name);
 }
 
 main()

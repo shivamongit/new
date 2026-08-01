@@ -47,7 +47,7 @@ export function nextPhase(current: DeployPhase): DeployPhase | null {
 }
 
 /**
- * Loop engineering deploy loop: bounded phases with verification and retry.
+ * Deployment orchestrator: bounded phases with verification and retry.
  * Each phase must prove success before advancing; failures retry up to maxAttempts.
  */
 export async function runDeployLoop(
@@ -68,7 +68,7 @@ export async function runDeployLoop(
       async () => ({
         phase: DeployPhase.INIT,
         success: true,
-        message: "Initialized deploy loop",
+        message: "Initialized deployment orchestration",
         shouldRetry: false,
       }),
       () => executor.installDeps({ ...ctx, attempt }),
@@ -99,7 +99,7 @@ export async function runDeployLoop(
     }
 
     if (!failed) {
-      log("Deploy loop converged — service healthy");
+      log("Deployment orchestration complete — service healthy");
       return { success: true, finalPhase: DeployPhase.COMPLETE };
     }
   }

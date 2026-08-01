@@ -52,20 +52,23 @@ export default function SettingsPage() {
           Settings
         </h1>
         <p className="mt-1 text-zinc-400">
-          Configure NSSM path and deployment defaults
+          Platform paths, runtime configuration, and development modes
         </p>
       </div>
 
       <Card className="mt-8 max-w-2xl">
         <CardHeader>
-          <CardTitle>Windows agent</CardTitle>
+          <CardTitle>Windows host</CardTitle>
           <CardDescription>
-            Paths and modes for the NovaDock Windows service wrapper
+            Defaults for the Windows Service Runtime and application directories
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label>NSSM executable path</Label>
+            <Label>Windows Service Runtime path</Label>
+            <p className="text-xs text-zinc-500">
+              Path to the NSSM executable on Windows production hosts
+            </p>
             <Input
               value={settings.nssmPath}
               onChange={(e) =>
@@ -85,9 +88,10 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.02] p-4">
             <div>
-              <p className="text-sm font-medium text-white">Simulate mode</p>
+              <p className="text-sm font-medium text-white">Simulation mode</p>
               <p className="text-xs text-zinc-500">
-                Safe testing without real NSSM (recommended for dev)
+                Run orchestration without registering real Windows services
+                (recommended for local development)
               </p>
             </div>
             <Switch

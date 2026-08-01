@@ -6,12 +6,14 @@ import { DeployPhase } from "@/lib/types";
 
 describe("slugify", () => {
   it("normalizes names to slugs", () => {
-    expect(slugify("Customer POC Dashboard")).toBe("customer-poc-dashboard");
+    expect(slugify("Customer Analytics Dashboard")).toBe(
+      "customer-analytics-dashboard",
+    );
     expect(slugify("  Hello World!  ")).toBe("hello-world");
   });
 });
 
-describe("deploy loop", () => {
+describe("deployment orchestrator", () => {
   it("converges to healthy service in simulate mode", async () => {
     const logs: string[] = [];
     const result = await runDeployLoop(

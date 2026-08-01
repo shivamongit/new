@@ -19,17 +19,17 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "NovaDock — Snap POCs to Windows",
+  title: "NovaDock — Windows Application Deployment Platform",
   description:
-    "Premium Windows POC deployment platform with loop-engineered NSSM automation",
+    "Deploy and operate Windows applications with intelligent orchestration, health verification, and operational visibility",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
   },
   openGraph: {
-    title: "NovaDock — Snap POCs to Windows",
+    title: "NovaDock — Windows Application Deployment Platform",
     description:
-      "One-click POC deployment with loop-engineered NSSM automation",
+      "Deploy and operate Windows applications with deployment confidence",
     images: ["/logo.png"],
   },
 };

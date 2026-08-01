@@ -3,7 +3,7 @@ import type { LoopContext, LoopStepResult, ServiceExecutor } from "../deploy-loo
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Simulated Windows service state for dev/demo on non-Windows hosts. */
+/** Simulated Windows service state for development on non-Windows hosts. */
 const simulatedServices = new Map<
   string,
   { running: boolean; port: number; healthy: boolean }
