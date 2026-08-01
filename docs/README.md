@@ -6,6 +6,7 @@ NovaDock is a **Windows application deployment platform** that gives teams a con
 
 | Guide | Description |
 |-------|-------------|
+| [Repository setup](repository-setup.md) | Create or migrate to the `novadock` GitHub repo |
 | [Architecture](architecture.md) | Platform components and data flow |
 | [Deployment](deployment.md) | How deployments work end to end |
 | [Configuration](configuration.md) | Settings, paths, and environment |
