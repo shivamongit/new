@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MaterialIcon } from "./material-icon";
@@ -19,9 +20,14 @@ export function StitchSidebar() {
     >
       <div className="mb-10 flex flex-col gap-2">
         <div className="flex items-center gap-3 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00f5ff] text-[#006c71]">
-            <MaterialIcon name="rocket_launch" fill className="text-lg" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="NovaDock"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-lg object-cover shadow-[0_0_20px_rgba(0,245,255,0.35)]"
+            priority
+          />
           <div className="flex flex-col">
             <span className="text-lg font-bold tracking-tight text-[#63f7ff]">
               NovaDock

@@ -22,6 +22,16 @@ export const metadata: Metadata = {
   title: "NovaDock — Snap POCs to Windows",
   description:
     "Premium Windows POC deployment platform with loop-engineered NSSM automation",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "NovaDock — Snap POCs to Windows",
+    description:
+      "One-click POC deployment with loop-engineered NSSM automation",
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({
