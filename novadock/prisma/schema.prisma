@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  template    String   @default("custom")
+  workDir     String
+  command     String
+  arguments   String?
+  port        Int
+  healthUrl   String?
+  envVars     String   @default("{}")
+  serviceName String
+  status      String   @default("PENDING")
+  pid         Int?
+  lastError   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deployRuns  DeployRun[]
+}
+
+model DeployRun {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  phase         String      @default("INIT")
+  attempt       Int         @default(1)
+  maxAttempts   Int         @default(3)
+  success       Boolean     @default(false)
+  logs          String      @default("")
+  haltReason    String?
+  startedAt     DateTime    @default(now())
+  completedAt   DateTime?
+
+  @@index([applicationId])
+}
+
+model Settings {
+  id           String  @id @default("default")
+  nssmPath     String  @default("nssm")
+  appsRoot     String  @default("C:\\NovaDock\\apps")
+  agentToken   String  @default("")
+  simulateMode Boolean @default(true)
+}
