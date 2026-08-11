@@ -433,30 +433,38 @@
 
   function injectSections() {
     const col = document.querySelector(".min-w-0 > .flex.w-full.flex-col");
-    if (!col) return;
+    if (!col) return false;
     const html = NEW_PRIMITIVES
       .filter((p) => !col.querySelector(`#${p.id}`))
       .map((p, i) => showcaseSection(p, DEMOS[p.id], 240 + i * 40))
       .join("");
     if (html) col.insertAdjacentHTML("beforeend", html);
+    return !!html;
   }
 
-  function wireVariantBars() {
-    document.querySelectorAll(".bui-ext-section").forEach((section) => {
-      const id = section.dataset.extId;
-      const bar = section.querySelector(".bui-ext-variants");
-      if (!bar) return;
-      bar.querySelectorAll("button").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          bar.querySelectorAll("button").forEach((b) => {
-            b.className =
-              "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 text-ink-3 hover:text-ink-2";
-          });
-          btn.className =
-            "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 bg-surface text-ink shadow-btn";
-          applyVariant(id, btn.dataset.variant, section);
-        });
-      });
+  function setActiveVariantButton(bar, activeBtn) {
+    bar.querySelectorAll("button").forEach((b) => {
+      b.className =
+        "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 text-ink-3 hover:text-ink-2";
+    });
+    activeBtn.className =
+      "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 bg-surface text-ink shadow-btn";
+  }
+
+  function flashDemo(section) {
+    const demo = section.querySelector("[data-demo]");
+    if (!demo) return;
+    demo.classList.remove("bui-ext-swap-in");
+    demo.style.opacity = "0.35";
+    demo.style.filter = "blur(3px)";
+    demo.style.transform = "translateY(4px)";
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        demo.style.opacity = "1";
+        demo.style.filter = "blur(0)";
+        demo.style.transform = "translateY(0)";
+        demo.classList.add("bui-ext-swap-in");
+      }, 120);
     });
   }
 
@@ -468,157 +476,295 @@
       if (label) label.textContent = data.label;
       if (body) body.innerHTML = data.body;
     }
-    if (id === "live-toasts" && VARIANT_CONTENT["live-toasts"][variant]) {
-      const data = VARIANT_CONTENT["live-toasts"][variant];
-      const bar = section.querySelector("[data-toast-progress]");
-      if (bar) {
-        bar.style.width = data.progress;
-        const colorClass =
-          data.color === "green" ? "bg-green" : data.color === "orange" ? "bg-orange" : "bg-red";
-        bar.className = `h-full rounded-full transition-all duration-500 ${colorClass}`;
+    if (id === "live-toasts") {
+      const stack = section.querySelector("[data-demo]");
+      if (stack && VARIANT_TOAST_HTML[variant]) {
+        stack.innerHTML = VARIANT_TOAST_HTML[variant];
       }
+    }
+    if (id === "attachment-tray" && VARIANT_ATTACHMENT_HTML[variant]) {
+      const list = section.querySelector("[data-attachment-list]");
+      if (list) list.innerHTML = VARIANT_ATTACHMENT_HTML[variant];
+    }
+    if (id === "response-rating" && VARIANT_RATING_HTML[variant]) {
+      const demo = section.querySelector("[data-demo]");
+      if (demo) demo.innerHTML = VARIANT_RATING_HTML[variant];
+    }
+    if (id === "tool-trace") {
+      const toggle = section.querySelector("[data-trace-toggle]");
+      const body = section.querySelector("[data-trace-body]");
+      const chevron = section.querySelector("[data-trace-chevron]");
+      if (variant === "Collapsed") {
+        toggle?.setAttribute("aria-expanded", "false");
+        if (body) {
+          body.style.gridTemplateRows = "0fr";
+          body.style.opacity = "0";
+        }
+        if (chevron) chevron.style.transform = "rotate(-90deg)";
+      } else if (variant === "Expanded") {
+        toggle?.setAttribute("aria-expanded", "true");
+        if (body) {
+          body.style.gridTemplateRows = "1fr";
+          body.style.opacity = "1";
+        }
+        if (chevron) chevron.style.transform = "rotate(0)";
+      } else if (variant === "Failed") {
+        toggle?.setAttribute("aria-expanded", "true");
+        if (body) {
+          body.style.gridTemplateRows = "1fr";
+          body.style.opacity = "1";
+          const list = body.querySelector(".flex.flex-col");
+          if (list) {
+            list.innerHTML = `
+              <div class="flex items-center gap-2 rounded-control px-1.5 py-1 bg-red-tint/50">
+                <span class="flex size-5 items-center justify-center rounded-full bg-red-tint text-red">${ICONS.x}</span>
+                <span class="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink">score_stockout_risk</span>
+                <span class="rounded-full bg-red-tint px-2 py-0.5 text-[10.5px] font-medium text-red">failed</span>
+              </div>
+              <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-ink-3">
+                <span class="flex size-5 items-center justify-center rounded-full border border-line"></span>
+                <span class="min-w-0 flex-1 truncate font-mono text-[11.5px]">draft_emails</span>
+                <span class="text-[10.5px]">skipped</span>
+              </div>`;
+          }
+        }
+      }
+    }
+    if (id === "memory-pins" && VARIANT_PINS_HTML[variant]) {
+      const demo = section.querySelector("[data-demo]");
+      if (demo) demo.innerHTML = VARIANT_PINS_HTML[variant];
     }
     if (id === "confidence-gate" && VARIANT_CONTENT["confidence-gate"][variant]) {
       const data = VARIANT_CONTENT["confidence-gate"][variant];
       const bars = section.querySelectorAll("[data-confidence-bars] span");
       const label = section.querySelector("[data-confidence-label]");
       bars.forEach((bar, i) => {
-        bar.className = `w-1 rounded-full transition-colors duration-300 ${i < data.level ? (data.level === 3 ? "bg-green" : data.level === 2 ? "bg-orange" : "bg-red") : "bg-line-strong"}`;
+        bar.className = `w-1 rounded-full transition-all duration-300 ${i < data.level ? (data.level === 3 ? "bg-green" : data.level === 2 ? "bg-orange" : "bg-red") : "bg-line-strong"}`;
         bar.style.height = "10px";
       });
       if (label) {
         label.textContent = data.label;
-        label.className = `text-[12.5px] font-medium ${data.class}`;
+        label.className = `text-[12.5px] font-medium transition-colors duration-300 ${data.class}`;
       }
     }
     if (id === "model-router") {
       const hint = section.querySelector("[data-model-hint]");
       const map = {
-        Auto: "inventory query",
-        Fast: "quick lookup",
-        Reasoning: "multi-step forecast",
+        Auto: { q: "inventory query", policy: "Auto policy" },
+        Fast: { q: "quick lookup", policy: "Sorbet 0" },
+        Reasoning: { q: "multi-step forecast", policy: "Mint 2" },
       };
-      if (hint) hint.innerHTML = `Routing <span class="font-medium text-ink">${map[variant] || "request"}</span> via ${variant} policy`;
+      const m = map[variant] || map.Auto;
+      if (hint) {
+        hint.innerHTML = `Routing <span class="font-medium text-ink">${m.q}</span> via <span class="text-accent-ink">${m.policy}</span>`;
+      }
+      const options = section.querySelectorAll("[data-model-option]");
+      const pick = variant === "Fast" ? "sorbet" : variant === "Reasoning" ? "mint" : "vanilla";
+      options.forEach((btn) => {
+        const on = btn.dataset.modelOption === pick;
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.classList.toggle("bg-field", on);
+        btn.classList.toggle("hover:bg-hover-2", !on);
+      });
     }
+    flashDemo(section);
   }
 
-  function wireInteractivity() {
-    document.querySelectorAll("[data-retry-btn]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const spin = btn.querySelector("[data-retry-spin]");
-        const label = btn.querySelector("[data-retry-label]");
-        const meta = btn.closest("[data-demo]").querySelector("[data-retry-meta]");
+  const VARIANT_TOAST_HTML = {
+    Success: `
+      <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-line">
+        <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-green-tint text-green">${ICONS.check}</span>
+        <div class="min-w-0 flex-1"><p class="text-[12.5px] font-medium text-ink">Reorder confirmed</p><p class="text-[11.5px] text-ink-3">cone_king PO #4821</p></div>
+      </div>`,
+    Warning: `
+      <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-line">
+        <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-orange-tint text-orange"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/></svg></span>
+        <div class="min-w-0 flex-1"><p class="text-[12.5px] font-medium text-ink">Mint chip below threshold</p><div class="mt-1 h-1 w-full overflow-hidden rounded-full bg-field"><div class="h-full w-[68%] rounded-full bg-orange transition-all duration-500"></div></div></div>
+      </div>`,
+    Error: `
+      <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-red-tint">
+        <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-red-tint text-red">${ICONS.x}</span>
+        <div class="min-w-0 flex-1"><p class="text-[12.5px] font-medium text-ink">Sync failed</p><p class="text-[11.5px] text-ink-3">POS connector unreachable</p></div>
+      </div>`,
+  };
+
+  const VARIANT_ATTACHMENT_HTML = {
+    Files: `
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-surface text-[10px] font-mono font-semibold text-red shadow-btn">PDF</span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">menu_q3.pdf</p><p class="text-[10.5px] text-ink-3">1.2 MB</p></div></div>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-surface text-[10px] font-mono font-semibold text-accent-ink shadow-btn">CSV</span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">velocity.csv</p><p class="text-[10.5px] text-ink-3">84 KB</p></div></div>
+      <button type="button" class="flex size-9 items-center justify-center rounded-control border border-dashed border-line-strong bg-inset text-ink-3">+</button>`,
+    Images: `
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-gradient-to-br from-accent-tint to-green-tint shadow-btn overflow-hidden"></span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">storefront.jpg</p><p class="text-[10.5px] text-ink-3">756 KB</p></div></div>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-gradient-to-br from-orange-tint to-red-tint shadow-btn"></span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">menu_board.png</p><p class="text-[10.5px] text-ink-3">412 KB</p></div></div>
+      <button type="button" class="flex size-9 items-center justify-center rounded-control border border-dashed border-line-strong bg-inset text-ink-3">+</button>`,
+    Mixed: `
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-surface text-[10px] font-mono text-accent-ink shadow-btn">CSV</span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">sales.csv</p></div></div>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline" data-attachment-chip><span class="flex size-7 items-center justify-center rounded-[6px] bg-gradient-to-br from-accent-tint to-green-tint shadow-btn"></span><div class="min-w-0"><p class="truncate text-[12.5px] font-medium text-ink">photo.jpg</p></div></div>
+      <button type="button" class="flex size-9 items-center justify-center rounded-control border border-dashed border-line-strong bg-inset text-ink-3">+</button>`,
+  };
+
+  const VARIANT_RATING_HTML = {
+    Thumbs: `
+      <div class="rounded-xl bg-field px-3 py-2 text-[12.5px] leading-relaxed text-ink">Pistachio should lead the weekend menu.</div>
+      <div class="flex items-center gap-1 mt-3" data-rating-row>
+        <button type="button" data-rating="up" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 hover:bg-hover"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+        <button type="button" data-rating="down" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 hover:bg-hover"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+        <span class="ml-2 text-[11.5px] text-ink-3" data-rating-hint>Rate this answer</span>
+      </div>`,
+    Stars: `
+      <div class="rounded-xl bg-field px-3 py-2 text-[12.5px] text-ink">Response quality for supplier draft</div>
+      <div class="mt-3 flex items-center gap-0.5">${[1,2,3,4,5].map(i => `<button type="button" class="flex size-8 items-center justify-center rounded-full text-ink-3 hover:bg-hover hover:text-orange" aria-label="Star ${i}"><svg width="16" height="16" viewBox="0 0 24 24" fill="${i<=4?'var(--orange)':'none'}" stroke="var(--orange)" stroke-width="1.5"><path d="M12 2l2.9 6.5L22 9.5l-5 4.5 1.5 6.5L12 17l-6.5 3 1.5-6.5-5-4.5 6.1-1 2.9-6.5z"/></svg></button>`).join("")}</div>
+      <p class="mt-1 text-[11.5px] text-ink-3">4 stars — almost perfect tone</p>`,
+    Tags: `
+      <div class="rounded-xl bg-field px-3 py-2 text-[12.5px] text-ink">Tag what was wrong</div>
+      <div class="mt-2 flex flex-wrap gap-1">${["Inaccurate","Too long","Off tone","Missing data"].map((t,i)=>`<button type="button" class="rounded-full px-2.5 py-1 text-[11.5px] font-medium transition-colors duration-150 ${i===0?'bg-accent-tint text-accent-ink':'bg-field text-ink-2 hover:bg-hover'}">${t}</button>`).join("")}</div>`,
+  };
+
+  const VARIANT_PINS_HTML = {
+    Pinned: `
+      <div class="overflow-hidden rounded-card bg-surface shadow-card bui-ext-pin-pop"><div class="primitive-card-pad"><div class="flex items-center gap-2"><span class="text-[12.5px] font-semibold text-ink">Weekend churn window</span><span class="rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-medium text-accent-ink">Pinned</span></div><p class="mt-1 text-[12px] text-ink-2">Churn pistachio before Saturday 10am.</p></div></div>
+      <div class="overflow-hidden rounded-card bg-surface shadow-card bui-ext-pin-pop" style="animation-delay:60ms"><div class="primitive-card-pad"><div class="flex items-center gap-2"><span class="text-[12.5px] font-semibold text-ink">Cone lead time</span><span class="rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-medium text-accent-ink">Pinned</span></div><p class="mt-1 text-[12px] text-ink-2">cone_king · 7 day lead</p></div></div>`,
+    Suggested: `
+      <div class="overflow-hidden rounded-card border border-dashed border-accent/30 bg-surface shadow-card bui-ext-pin-pop"><div class="primitive-card-pad"><div class="flex items-center gap-2"><span class="text-[12.5px] font-semibold text-ink">Peak hour shift</span><span class="rounded-full bg-field px-2 py-0.5 text-[10px] font-medium text-accent-ink">Suggested</span></div><p class="mt-1 text-[12px] text-ink-2">Weekend demand peaks after 3pm — pin this?</p><button type="button" class="mt-2 rounded-full bg-accent px-3 py-1 text-[11.5px] font-medium text-white">Pin fact</button></div></div>`,
+    Expired: `
+      <div class="overflow-hidden rounded-card bg-inset shadow-hairline opacity-80"><div class="primitive-card-pad"><div class="flex items-center gap-2"><span class="text-[12.5px] font-semibold text-ink-3">Summer pop-up hours</span><span class="rounded-full bg-field px-2 py-0.5 text-[10px] text-ink-3">Expired</span></div><p class="mt-1 text-[12px] text-ink-3">Valid through Aug 1 — archived automatically.</p></div></div>`,
+  };
+
+  function setupDelegation() {
+    if (document.documentElement.dataset.buiExtDelegation) return;
+    document.documentElement.dataset.buiExtDelegation = "true";
+
+    document.addEventListener("click", (e) => {
+      const variantBtn = e.target.closest(".bui-ext-variants button[data-variant]");
+      if (variantBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const section = variantBtn.closest(".bui-ext-section");
+        const bar = variantBtn.closest(".bui-ext-variants");
+        if (!section || !bar) return;
+        setActiveVariantButton(bar, variantBtn);
+        applyVariant(section.dataset.extId, variantBtn.dataset.variant, section);
+        return;
+      }
+
+      const retryBtn = e.target.closest("[data-retry-btn]");
+      if (retryBtn && !retryBtn.disabled) {
+        e.preventDefault();
+        const spin = retryBtn.querySelector("[data-retry-spin]");
+        const label = retryBtn.querySelector("[data-retry-label]");
+        const demo = retryBtn.closest("[data-demo]");
+        const meta = demo?.querySelector("[data-retry-meta]");
         if (spin) spin.classList.remove("hidden");
         if (label) label.textContent = "Retrying…";
-        btn.disabled = true;
+        retryBtn.disabled = true;
         setTimeout(() => {
           if (spin) spin.classList.add("hidden");
           if (label) label.textContent = "Retry export";
-          btn.disabled = false;
+          retryBtn.disabled = false;
           if (meta) meta.textContent = "Attempt 2 of 3";
-          const stateLabel = btn.closest("[data-demo]").querySelector("[data-state-label]");
+          const stateLabel = demo?.querySelector("[data-state-label]");
           if (stateLabel) stateLabel.textContent = "Export recovered";
         }, 1400);
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-dismiss-toast]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const toast = btn.closest("[data-toast]");
+      const dismissToast = e.target.closest("[data-dismiss-toast]");
+      if (dismissToast) {
+        const toast = dismissToast.closest("[data-toast]");
         if (toast) {
           toast.style.transition = "opacity 200ms ease, transform 200ms ease";
           toast.style.opacity = "0";
-          toast.style.transform = "translateY(-4px)";
+          toast.style.transform = "translateY(-8px)";
           setTimeout(() => toast.remove(), 200);
         }
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-remove-chip]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const chip = btn.closest("[data-attachment-chip]");
+      const removeChip = e.target.closest("[data-remove-chip]");
+      if (removeChip) {
+        const chip = removeChip.closest("[data-attachment-chip]");
         if (chip) {
           chip.style.transition = "opacity 150ms ease, transform 150ms ease";
           chip.style.opacity = "0";
-          chip.style.transform = "scale(0.96)";
+          chip.style.transform = "scale(0.94)";
           setTimeout(() => chip.remove(), 150);
         }
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-rating]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const row = btn.closest("[data-rating-row]");
-        const panel = btn.closest("[data-demo]").querySelector("[data-correction-panel]");
-        const hint = btn.closest("[data-demo]").querySelector("[data-rating-hint]");
-        row.querySelectorAll("[data-rating]").forEach((b) => {
-          b.setAttribute("aria-pressed", "false");
+      const ratingBtn = e.target.closest("[data-rating]");
+      if (ratingBtn) {
+        const demo = ratingBtn.closest("[data-demo]");
+        const row = ratingBtn.closest("[data-rating-row]");
+        const panel = demo?.querySelector("[data-correction-panel]");
+        const hint = demo?.querySelector("[data-rating-hint]");
+        row?.querySelectorAll("[data-rating]").forEach((b) => {
           b.classList.remove("bg-accent-tint", "text-accent-ink");
           b.classList.add("bg-field", "text-ink-2");
         });
-        btn.setAttribute("aria-pressed", "true");
-        btn.classList.remove("bg-field", "text-ink-2");
-        btn.classList.add("bg-accent-tint", "text-accent-ink");
-        if (hint) hint.textContent = btn.dataset.rating === "up" ? "Thanks for the feedback" : "We'll improve this";
-        if (panel && btn.dataset.rating === "down") {
+        ratingBtn.classList.remove("bg-field", "text-ink-2");
+        ratingBtn.classList.add("bg-accent-tint", "text-accent-ink");
+        if (hint) hint.textContent = ratingBtn.dataset.rating === "up" ? "Thanks for the feedback" : "We'll improve this";
+        if (panel && ratingBtn.dataset.rating === "down") {
           panel.style.gridTemplateRows = "1fr";
           panel.style.opacity = "1";
         }
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-trace-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        btn.setAttribute("aria-expanded", String(!expanded));
-        const body = btn.closest("[data-demo]").querySelector("[data-trace-body]");
-        const chevron = btn.querySelector("[data-trace-chevron]");
+      const traceToggle = e.target.closest("[data-trace-toggle]");
+      if (traceToggle) {
+        const expanded = traceToggle.getAttribute("aria-expanded") === "true";
+        traceToggle.setAttribute("aria-expanded", String(!expanded));
+        const body = traceToggle.closest("[data-demo]")?.querySelector("[data-trace-body]");
+        const chevron = traceToggle.querySelector("[data-trace-chevron]");
         if (body) {
           body.style.gridTemplateRows = expanded ? "0fr" : "1fr";
           body.style.opacity = expanded ? "0" : "1";
         }
         if (chevron) chevron.style.transform = expanded ? "rotate(-90deg)" : "rotate(0)";
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-pin-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const pin = btn.closest("[data-pin]");
-        if (!pin) return;
-        pin.style.transition = "opacity 200ms ease, transform 200ms ease";
-        pin.style.opacity = "0";
-        pin.style.transform = "scale(0.98)";
-        setTimeout(() => pin.remove(), 200);
-      });
-    });
+      const pinToggle = e.target.closest("[data-pin-toggle]");
+      if (pinToggle) {
+        const pin = pinToggle.closest("[data-pin]");
+        if (pin) {
+          pin.style.transition = "opacity 200ms ease, transform 200ms ease";
+          pin.style.opacity = "0";
+          pin.style.transform = "scale(0.96)";
+          setTimeout(() => pin.remove(), 200);
+        }
+        return;
+      }
 
-    document.querySelectorAll("[data-alt-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        btn.setAttribute("aria-expanded", String(!expanded));
-        const panel = btn.closest("[data-demo]").querySelector("[data-alt-panel]");
+      const altToggle = e.target.closest("[data-alt-toggle]");
+      if (altToggle) {
+        const expanded = altToggle.getAttribute("aria-expanded") === "true";
+        altToggle.setAttribute("aria-expanded", String(!expanded));
+        const panel = altToggle.closest("[data-demo]")?.querySelector("[data-alt-panel]");
         if (panel) {
           panel.style.gridTemplateRows = expanded ? "0fr" : "1fr";
           panel.style.opacity = expanded ? "0" : "1";
         }
-      });
-    });
+        return;
+      }
 
-    document.querySelectorAll("[data-model-option]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const list = btn.closest("[data-model-list]");
-        list.querySelectorAll("[data-model-option]").forEach((b) => {
+      const modelBtn = e.target.closest("[data-model-option]");
+      if (modelBtn) {
+        const list = modelBtn.closest("[data-model-list]");
+        list?.querySelectorAll("[data-model-option]").forEach((b) => {
           b.setAttribute("aria-pressed", "false");
           b.classList.remove("bg-field");
           b.classList.add("hover:bg-hover-2");
         });
-        btn.setAttribute("aria-pressed", "true");
-        btn.classList.add("bg-field");
-        btn.classList.remove("hover:bg-hover-2");
-        const hint = btn.closest("[data-demo]").querySelector("[data-model-hint]");
-        const name = btn.querySelector("p.font-medium")?.textContent || "model";
-        if (hint) hint.innerHTML = `Routing <span class="font-medium text-ink">inventory query</span> to ${name}`;
-      });
+        modelBtn.setAttribute("aria-pressed", "true");
+        modelBtn.classList.add("bg-field");
+        modelBtn.classList.remove("hover:bg-hover-2");
+        const hint = modelBtn.closest("[data-demo]")?.querySelector("[data-model-hint]");
+        const name = modelBtn.querySelector("p.font-medium")?.textContent || "model";
+        if (hint) hint.innerHTML = `Routing <span class="font-medium text-ink">inventory query</span> to <span class="text-accent-ink">${name}</span>`;
+      }
     });
   }
 
@@ -646,18 +792,17 @@
     document.head.appendChild(link);
   }
 
-  let interactionsWired = false;
+  let navWired = false;
 
   function run() {
     removeMarketing();
     ensureStylesheet();
+    setupDelegation();
     injectNav();
     injectSections();
-    if (!interactionsWired) {
-      wireVariantBars();
-      wireInteractivity();
+    if (!navWired) {
       wireNavScroll();
-      interactionsWired = true;
+      navWired = true;
     }
   }
 
@@ -665,11 +810,16 @@
     setTimeout(run, 0);
   }
 
+  // Setup delegation immediately so clicks work even before sections exist.
+  setupDelegation();
+
   if (document.readyState === "complete") {
     scheduleRun();
   } else {
     window.addEventListener("load", scheduleRun, { once: true });
     document.addEventListener("DOMContentLoaded", scheduleRun, { once: true });
   }
-  setTimeout(run, 2000);
+
+  // Re-inject after React hydration (it can replace the showcase column).
+  [800, 1600, 2800, 4500].forEach((ms) => setTimeout(run, ms));
 })();
