@@ -646,14 +646,19 @@
     document.head.appendChild(link);
   }
 
+  let interactionsWired = false;
+
   function run() {
     removeMarketing();
     ensureStylesheet();
     injectNav();
     injectSections();
-    wireVariantBars();
-    wireInteractivity();
-    wireNavScroll();
+    if (!interactionsWired) {
+      wireVariantBars();
+      wireInteractivity();
+      wireNavScroll();
+      interactionsWired = true;
+    }
   }
 
   function scheduleRun() {
