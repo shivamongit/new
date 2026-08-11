@@ -19,7 +19,7 @@ export function ShowcaseSection({ index, id, title, caption, variants, children 
       id={id}
       className="primitive-showcase group flex w-full scroll-mt-8 flex-col border-b border-dashed border-line px-8 py-10"
       style={{
-        animation: `fade-up 600ms cubic-bezier(0.23,1,0.32,1) ${index * 60}ms both`,
+        animation: `fade-up 600ms cubic-bezier(0.23,1,0.32,1) ${index * 60}ms forwards`,
       }}
     >
       <div className="mb-3 flex items-start gap-2 sm:items-baseline">
