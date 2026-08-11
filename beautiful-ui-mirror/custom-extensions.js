@@ -179,8 +179,14 @@
     injectSections();
   }
 
-  run();
-  document.addEventListener("DOMContentLoaded", run);
-  setTimeout(run, 500);
-  setTimeout(run, 2000);
+  // Run after Next/React hydration to avoid mismatch errors (#418).
+  function scheduleRun() {
+    setTimeout(run, 0);
+  }
+
+  if (document.readyState === "complete") {
+    scheduleRun();
+  } else {
+    window.addEventListener("load", scheduleRun, { once: true });
+  }
 })();

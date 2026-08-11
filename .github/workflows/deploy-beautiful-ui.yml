@@ -27,6 +27,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
+          # GitHub Pages project sites are served from /new/ — prefix root-absolute asset paths.
+          find . -type f \( -name '*.html' -o -name '*.js' \) -print0 \
+            | xargs -0 sed -i \
+              -e 's|"/_next/|"/new/_next/|g' \
+              -e 's|"/logo.png|"/new/logo.png|g' \
+              -e 's|"/turbo-flourish.png|"/new/turbo-flourish.png|g' \
+              -e 's|"/icon.png|"/new/icon.png|g' \
+              -e 's|r.p="/_next/"|r.p="/new/_next/"|g'
+          git add -A
           git commit -m "Deploy Beautiful UI mirror from ${GITHUB_SHA}"
           git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:gh-pages
         env:
