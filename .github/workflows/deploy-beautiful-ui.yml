@@ -1,0 +1,53 @@
+name: Deploy Beautiful UI
+
+on:
+  push:
+    branches: [main, cursor/beautiful-ui-replica-2b0c]
+    paths:
+      - "beautiful-ui/**"
+      - ".github/workflows/deploy-beautiful-ui.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-beautiful-ui
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: beautiful-ui/pnpm-lock.yaml
+      - name: Install and build
+        working-directory: beautiful-ui
+        env:
+          NEXT_PUBLIC_BASE_PATH: /new/beautiful-ui
+        run: |
+          pnpm install --frozen-lockfile || pnpm install
+          pnpm build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: beautiful-ui/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
