@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+  --radius-window: 12px;
+  --radius-control: 8px;
+}
+
+:root {
+  --page: #fafafb;
+  --canvas: #f1f2f3;
+  --surface: #fff;
+  --inset: #f7f8f9;
+  --hover: #f4f5f6;
+  --hover-2: #e7e9eb;
+  --ink: #1f2124;
+  --ink-2: #62656b;
+  --ink-3: #9a9da3;
+  --line: #ecedef;
+  --line-strong: #e0e2e5;
+  --field: #f2f2f3;
+  --accent: #0285ff;
+  --accent-ink: #0170dd;
+  --accent-tint: #e9f3ff;
+  --green: #189a4d;
+  --green-tint: #e8f5ed;
+  --orange: #ef720c;
+  --orange-tint: #fdf1e5;
+  --red: #e3474c;
+  --red-tint: #fcecec;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), 0 1px 2px #1018280d;
+}
+
+.dark {
+  --page: #17181a;
+  --canvas: #1c1d1f;
+  --surface: #232427;
+  --inset: #1f2022;
+  --hover: #2a2b2e;
+  --hover-2: #313236;
+  --ink: #f2f3f4;
+  --ink-2: #a5a8ad;
+  --ink-3: #6c6f75;
+  --line: #2e3033;
+  --line-strong: #3a3c40;
+  --field: #2b2c2f;
+  --accent: #3d9aff;
+  --accent-ink: #7ec0ff;
+  --accent-tint: #3d9aff29;
+  --green: #3dbb72;
+  --green-tint: #3dbb7224;
+  --orange: #f68f3c;
+  --orange-tint: #f68f3c24;
+  --red: #ee5c61;
+  --red-tint: #ee5c6124;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), 0 1px 2px #0000004d;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.bg-page {
+  background-color: var(--page);
+}
+.bg-canvas {
+  background-color: var(--canvas);
+}
+.bg-surface {
+  background-color: var(--surface);
+}
+.bg-field {
+  background-color: var(--field);
+}
+.bg-hover {
+  background-color: var(--hover);
+}
+.bg-hover-2 {
+  background-color: var(--hover-2);
+}
+.bg-inset {
+  background-color: var(--inset);
+}
+.bg-accent-tint {
+  background-color: var(--accent-tint);
+}
+.bg-green-tint {
+  background-color: var(--green-tint);
+}
+.bg-orange-tint {
+  background-color: var(--orange-tint);
+}
+.bg-red-tint {
+  background-color: var(--red-tint);
+}
+.text-ink {
+  color: var(--ink);
+}
+.text-ink-2 {
+  color: var(--ink-2);
+}
+.text-ink-3 {
+  color: var(--ink-3);
+}
+.text-accent {
+  color: var(--accent);
+}
+.text-green {
+  color: var(--green);
+}
+.text-orange {
+  color: var(--orange);
+}
+.text-red {
+  color: var(--red);
+}
+.border-line {
+  border-color: var(--line);
+}
+.border-line-strong {
+  border-color: var(--line-strong);
+}
+.shadow-hairline {
+  box-shadow: var(--shadow-hairline);
+}
+.shadow-btn {
+  box-shadow: var(--shadow-btn);
+}
+.rounded-window {
+  border-radius: var(--radius-window);
+}
+.rounded-control {
+  border-radius: var(--radius-control);
+}
+.shimmer-text {
+  background-image: linear-gradient(
+    90deg,
+    var(--ink-3) 35%,
+    var(--ink) 50%,
+    var(--ink-3) 65%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-text 1.4s linear infinite;
+  background-clip: text;
+  color: transparent;
+}
+
+.component-nav-scroll::-webkit-scrollbar {
+  width: 0;
+}
+
+@media (min-width: 1024px) {
+  .component-nav-scroll {
+    scrollbar-width: thin;
+  }
+}
