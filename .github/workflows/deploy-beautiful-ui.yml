@@ -2,14 +2,16 @@ name: Deploy Beautiful UI
 
 on:
   push:
-    branches: [main, cursor/beautiful-ui-replica-2b0c]
+    branches: [main]
     paths:
       - "beautiful-ui/**"
       - ".github/workflows/deploy-beautiful-ui.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages-beautiful-ui
@@ -18,8 +20,12 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - uses: pnpm/action-setup@v4
         with:
           version: 9
@@ -33,14 +39,10 @@ jobs:
         run: |
           pnpm install --frozen-lockfile || pnpm install
           pnpm build
-      - name: Deploy to gh-pages branch
-        run: |
-          cd beautiful-ui/out
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Deploy Beautiful UI from ${GITHUB_SHA}"
-          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: beautiful-ui/out
+      - id: deployment
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
