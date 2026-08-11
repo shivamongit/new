@@ -1,42 +1,413 @@
 (function () {
+  "use strict";
+
+  const BASE = document.querySelector("base")?.href?.replace(/\/$/, "") || "";
+
   const NEW_PRIMITIVES = [
     {
       id: "error-recovery",
-      title: "Error Recovery",
-      caption: "Graceful failure with retry and context for the user.",
       number: "20",
+      title: "Error Recovery",
+      caption: "Graceful failure with retry, fallback, and clear operator context.",
+      variants: ["Timeout", "Auth", "Rate limit"],
     },
     {
-      id: "toast-alert",
-      title: "Toast Alert",
-      caption: "Transient success, warning, and error notifications.",
+      id: "live-toasts",
       number: "21",
+      title: "Live Toasts",
+      caption: "Stacked transient alerts with severity, progress, and dismiss.",
+      variants: ["Success", "Warning", "Error"],
     },
     {
-      id: "file-attachments",
-      title: "File Attachments",
-      caption: "Upload previews with type icons and remove actions.",
+      id: "attachment-tray",
       number: "22",
+      title: "Attachment Tray",
+      caption: "Upload chips with type badges, size, and remove-on-hover.",
+      variants: ["Files", "Images", "Mixed"],
     },
     {
-      id: "response-feedback",
-      title: "Response Feedback",
-      caption: "Thumbs, stars, and quick correction on agent output.",
+      id: "response-rating",
       number: "23",
+      title: "Response Rating",
+      caption: "Inline feedback on agent output — quick rating or correction.",
+      variants: ["Thumbs", "Stars", "Tags"],
     },
     {
-      id: "agent-timeline",
-      title: "Agent Timeline",
-      caption: "Vertical timeline of tool calls and checkpoints.",
+      id: "tool-trace",
       number: "24",
+      title: "Tool Trace",
+      caption: "Expandable trace of tool calls with timing and status pills.",
+      variants: ["Collapsed", "Expanded", "Failed"],
     },
     {
       id: "memory-pins",
-      title: "Memory Pins",
-      caption: "Pinned facts the agent keeps across sessions.",
       number: "25",
+      title: "Memory Pins",
+      caption: "Pinned facts the agent recalls across sessions and handoffs.",
+      variants: ["Pinned", "Suggested", "Expired"],
+    },
+    {
+      id: "confidence-gate",
+      number: "26",
+      title: "Confidence Gate",
+      caption: "Low-confidence blocker with meter, rationale, and override path.",
+      variants: ["High", "Medium", "Blocked"],
+    },
+    {
+      id: "model-router",
+      number: "27",
+      title: "Model Router",
+      caption: "Route requests to fast, balanced, or reasoning models.",
+      variants: ["Auto", "Fast", "Reasoning"],
     },
   ];
+
+  const ICONS = {
+    copy:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+    code:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"></path></svg>',
+    chevron:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>',
+    check:
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>',
+    x: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>',
+    spark:
+      '<svg width="9" height="9" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path></svg>',
+  };
+
+  function variantBar(variants, active = 0) {
+    if (!variants?.length) return "";
+    return `<div class="absolute bottom-2.5 left-1/2 flex -translate-x-1/2 rounded-full bg-field p-0.5 bui-ext-variants">${variants
+      .map(
+        (v, i) =>
+          `<button type="button" data-variant="${v}" class="rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 ${i === active ? "bg-surface text-ink shadow-btn" : "text-ink-3 hover:text-ink-2"}">${v}</button>`,
+      )
+      .join("")}</div>`;
+  }
+
+  function actionButtons() {
+    return `<div class="absolute top-3 right-3 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+      <button type="button" aria-label="Copy code" class="flex size-7 items-center justify-center rounded-control bg-surface shadow-btn transition-colors duration-100 hover:bg-hover text-ink-3 hover:text-ink">${ICONS.copy}</button>
+      <button type="button" aria-label="View code" class="flex size-7 items-center justify-center rounded-control bg-surface text-ink-3 shadow-btn transition-colors duration-100 hover:bg-hover hover:text-ink">${ICONS.code}</button>
+    </div>`;
+  }
+
+  function showcaseSection(primitive, innerHtml, delayMs = 240) {
+    return `
+<section id="${primitive.id}" class="primitive-showcase group bui-ext-section flex w-full scroll-mt-8 flex-col border-b border-dashed border-line px-8 py-10 bui-ext-fade-up" style="animation-delay:${delayMs}ms" data-ext-id="${primitive.id}">
+  <div class="mb-3 flex items-start gap-2 sm:items-baseline">
+    <span class="mt-0.5 font-mono text-[11px] text-ink-3 tabular-nums sm:mt-0">${primitive.number}</span>
+    <div class="min-w-0 sm:flex sm:items-baseline sm:gap-2">
+      <h3 class="whitespace-nowrap text-[13px] font-semibold text-ink">${primitive.title}</h3>
+      <p class="mt-0.5 text-[12.5px] text-ink-3 text-pretty sm:mt-0 sm:truncate">${primitive.caption}</p>
+    </div>
+  </div>
+  <div class="primitive-demo-surface relative flex items-center justify-center overflow-hidden rounded-window bg-canvas p-3 shadow-hairline" style="min-height:272px">
+    <div class="w-full max-w-120 [&>*]:mx-auto">${innerHtml}</div>
+    ${variantBar(primitive.variants)}
+    ${actionButtons()}
+  </div>
+</section>`;
+  }
+
+  const DEMOS = {
+    "error-recovery": `
+<div class="flex min-h-[196px] w-full max-w-80 flex-col items-stretch" data-demo="error-recovery">
+  <div class="w-full overflow-hidden rounded-card bg-surface shadow-card">
+    <div class="primitive-card-pad" style="animation:fade-up 350ms cubic-bezier(0.23,1,0.32,1) both">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-start gap-2.5">
+          <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-tint text-red">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          </span>
+          <div class="min-w-0">
+            <p class="text-[13px] font-medium text-ink" data-state-label>POS export timed out</p>
+            <p class="mt-1 text-[12.5px] leading-relaxed text-ink-2" data-state-body>Could not read <code class="rounded-md bg-accent-tint px-1.5 py-0.5 font-mono text-[11px] text-accent-ink">weekend_sales.csv</code> after 30s. Cached export from 2h ago is available.</p>
+          </div>
+        </div>
+        <button type="button" aria-label="Dismiss" class="primitive-icon-button shrink-0 text-ink-3 hover:bg-hover hover:text-ink">${ICONS.x}</button>
+      </div>
+    </div>
+    <div class="primitive-card-footer flex items-center justify-between gap-3 border-t border-line bg-inset">
+      <span class="text-[12px] text-ink-3 tabular-nums" data-retry-meta>Attempt 1 of 3</span>
+      <span class="flex items-center gap-2">
+        <button type="button" class="h-7 rounded-control px-2.5 text-[12.5px] font-medium shadow-btn bg-surface text-ink-2 hover:bg-hover transition-[background-color,transform] duration-100 active:scale-[0.96]" data-use-cache>Use cache</button>
+        <button type="button" class="h-7 rounded-control px-3 text-[12.5px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_0_1px_rgba(16,24,40,0.12),0_1px_2px_rgba(16,24,40,0.1)] bg-accent text-white transition-[background-color,transform] duration-150 active:scale-[0.96] flex items-center gap-1.5" data-retry-btn>
+          <span data-retry-label>Retry export</span>
+          <span class="hidden size-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" data-retry-spin></span>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>`,
+
+    "live-toasts": `
+<div class="flex w-full max-w-95 flex-col gap-2 min-h-[200px]" data-demo="live-toasts">
+  <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-line" data-toast>
+    <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-green-tint text-green">${ICONS.check}</span>
+    <div class="min-w-0 flex-1">
+      <p class="text-[12.5px] font-medium text-ink">Reorder draft saved</p>
+      <p class="text-[11.5px] text-ink-3">Aurora Scoops · cone_king PO</p>
+    </div>
+    <button type="button" aria-label="Dismiss" class="flex size-6 items-center justify-center rounded-[6px] text-ink-3 hover:bg-hover hover:text-ink" data-dismiss-toast>${ICONS.x}</button>
+  </div>
+  <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-line" style="animation-delay:80ms" data-toast>
+    <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-orange-tint text-orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/></svg>
+    </span>
+    <div class="min-w-0 flex-1">
+      <p class="text-[12.5px] font-medium text-ink">Mint chip below threshold</p>
+      <div class="mt-1 h-1 w-full overflow-hidden rounded-full bg-field"><div class="h-full w-[68%] rounded-full bg-orange transition-all duration-500" data-toast-progress></div></div>
+    </div>
+    <button type="button" aria-label="Dismiss" class="flex size-6 items-center justify-center rounded-[6px] text-ink-3 hover:bg-hover hover:text-ink" data-dismiss-toast>${ICONS.x}</button>
+  </div>
+  <div class="bui-ext-toast-enter flex items-center gap-2.5 rounded-[10px] bg-surface px-3 py-2 shadow-raised border border-line opacity-90" style="animation-delay:160ms" data-toast>
+    <span class="relative flex size-6 shrink-0 items-center justify-center">
+      <span class="absolute size-2 rounded-full bg-accent bui-ext-pulse-dot"></span>
+      <span class="flex size-6 items-center justify-center rounded-full bg-accent-tint text-accent">${ICONS.spark}</span>
+    </span>
+    <div class="min-w-0 flex-1">
+      <p class="text-[12.5px] font-medium text-ink">Agent drafting supplier emails</p>
+      <p class="text-[11.5px] text-ink-3">2 of 3 messages queued</p>
+    </div>
+  </div>
+</div>`,
+
+    "attachment-tray": `
+<div class="w-full max-w-105" data-demo="attachment-tray">
+  <div class="rounded-[14px] border border-line bg-surface p-2 shadow-card">
+    <div class="flex items-center justify-between px-1.5 pb-2">
+      <span class="text-[12px] font-medium text-ink">Attachments</span>
+      <span class="text-[11px] text-ink-3 tabular-nums">3 files · 2.1 MB</span>
+    </div>
+    <div class="flex flex-wrap gap-1.5" data-attachment-list>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline transition-colors duration-150 hover:bg-hover" data-attachment-chip>
+        <span class="flex size-7 items-center justify-center rounded-[6px] bg-surface text-[10px] font-mono font-semibold text-red shadow-btn">PDF</span>
+        <div class="min-w-0">
+          <p class="truncate text-[12.5px] font-medium text-ink">menu_q3_draft.pdf</p>
+          <p class="text-[10.5px] text-ink-3 tabular-nums">1.2 MB</p>
+        </div>
+        <button type="button" aria-label="Remove" class="ml-1 flex size-6 items-center justify-center rounded-[6px] text-ink-3 opacity-0 transition-all duration-150 group-hover/chip:opacity-100 hover:bg-hover hover:text-ink" data-remove-chip>${ICONS.x}</button>
+      </div>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline transition-colors duration-150 hover:bg-hover" data-attachment-chip>
+        <span class="flex size-7 items-center justify-center rounded-[6px] bg-surface text-[10px] font-mono font-semibold text-accent-ink shadow-btn">CSV</span>
+        <div class="min-w-0">
+          <p class="truncate text-[12.5px] font-medium text-ink">flavor_velocity.csv</p>
+          <p class="text-[10.5px] text-ink-3 tabular-nums">84 KB</p>
+        </div>
+        <button type="button" aria-label="Remove" class="ml-1 flex size-6 items-center justify-center rounded-[6px] text-ink-3 opacity-0 transition-all duration-150 group-hover/chip:opacity-100 hover:bg-hover hover:text-ink" data-remove-chip>${ICONS.x}</button>
+      </div>
+      <div class="group/chip flex items-center gap-2 rounded-control bg-field px-2 py-1.5 shadow-hairline transition-colors duration-150 hover:bg-hover" data-attachment-chip>
+        <span class="flex size-7 items-center justify-center rounded-[6px] bg-surface overflow-hidden shadow-btn">
+          <span class="size-full bg-gradient-to-br from-accent-tint to-green-tint"></span>
+        </span>
+        <div class="min-w-0">
+          <p class="truncate text-[12.5px] font-medium text-ink">storefront.jpg</p>
+          <p class="text-[10.5px] text-ink-3 tabular-nums">756 KB</p>
+        </div>
+        <button type="button" aria-label="Remove" class="ml-1 flex size-6 items-center justify-center rounded-[6px] text-ink-3 opacity-0 transition-all duration-150 group-hover/chip:opacity-100 hover:bg-hover hover:text-ink" data-remove-chip>${ICONS.x}</button>
+      </div>
+      <button type="button" class="flex size-9 items-center justify-center rounded-control border border-dashed border-line-strong bg-inset text-ink-3 transition-colors duration-150 hover:border-line hover:bg-hover hover:text-ink" aria-label="Add file">+</button>
+    </div>
+  </div>
+</div>`,
+
+    "response-rating": `
+<div class="w-full max-w-95 space-y-3" data-demo="response-rating">
+  <div class="rounded-xl bg-field px-3 py-2 text-[12.5px] leading-relaxed text-ink">
+  Pistachio should lead the weekend menu — demand peaks after 2pm at <span class="font-medium">Kumo Creamery</span> with <code class="rounded bg-accent-tint px-1 font-mono text-[11px] text-accent-ink">+18%</code> lift.
+  </div>
+  <div class="flex items-center gap-1" data-rating-row>
+    <button type="button" aria-label="Helpful" aria-pressed="false" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 transition-[background-color,color,transform] duration-150 hover:bg-hover active:scale-[0.94]" data-rating="up">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+    </button>
+    <button type="button" aria-label="Not helpful" aria-pressed="false" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 transition-[background-color,color,transform] duration-150 hover:bg-hover active:scale-[0.94]" data-rating="down">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+    </button>
+    <span class="ml-2 text-[11.5px] text-ink-3" data-rating-hint>Rate this answer</span>
+  </div>
+  <div class="grid transition-[grid-template-rows,opacity] duration-300" style="grid-template-rows:0fr;opacity:0" data-correction-panel>
+    <div class="overflow-hidden">
+      <label class="flex flex-col gap-1.5 rounded-control border border-line bg-surface p-2 shadow-hairline focus-within:border-line-strong">
+        <span class="text-[11px] font-medium text-ink-3">Tell the agent what's wrong</span>
+        <input type="text" placeholder="Peak is after 3pm, not 2pm…" class="bg-transparent text-[12.5px] text-ink outline-none placeholder:text-ink-3" />
+      </label>
+    </div>
+  </div>
+</div>`,
+
+    "tool-trace": `
+<div class="min-h-[220px] w-full max-w-95 pb-1" data-demo="tool-trace">
+  <button type="button" aria-expanded="true" class="-mx-1.5 flex w-fit items-center gap-1.5 rounded-control px-1.5 py-1 text-[12.5px] text-ink-2 transition-colors duration-100 hover:bg-hover-2" data-trace-toggle>
+    <span class="transition-transform duration-200" data-trace-chevron style="display:inline-flex">${ICONS.chevron}</span>
+    <span class="tabular-nums">4 tool calls · 1.2s</span>
+  </button>
+  <div class="grid transition-[grid-template-rows,opacity] duration-300" style="grid-template-rows:1fr;opacity:1" data-trace-body>
+    <div class="-mx-1 overflow-hidden px-1.5 pb-1">
+      <div class="mt-1.5 flex flex-col gap-1">
+        <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-[12px] hover:bg-hover-2">
+          <span class="flex size-5 items-center justify-center rounded-full bg-green-tint text-green">${ICONS.check}</span>
+          <span class="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2">read_pos_export</span>
+          <span class="rounded-full bg-green-tint px-2 py-0.5 text-[10.5px] font-medium text-green">240ms</span>
+        </div>
+        <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-[12px] hover:bg-hover-2">
+          <span class="flex size-5 items-center justify-center rounded-full bg-green-tint text-green">${ICONS.check}</span>
+          <span class="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2">match_suppliers</span>
+          <span class="rounded-full bg-green-tint px-2 py-0.5 text-[10.5px] font-medium text-green">180ms</span>
+        </div>
+        <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-[12px] bg-accent-tint/40">
+          <span class="relative flex size-5 items-center justify-center">
+            <svg width="18" height="18" class="absolute animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="var(--line)" stroke-width="2"/><circle cx="12" cy="12" r="11" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="19 50"/></svg>
+          </span>
+          <span class="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink">score_stockout_risk</span>
+          <span class="rounded-full bg-field px-2 py-0.5 text-[10.5px] font-medium text-accent-ink">running</span>
+        </div>
+        <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-[12px] text-ink-3">
+          <span class="flex size-5 items-center justify-center rounded-full border border-line"></span>
+          <span class="min-w-0 flex-1 truncate font-mono text-[11.5px]">draft_emails</span>
+          <span class="text-[10.5px]">queued</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+    "memory-pins": `
+<div class="w-full max-w-95 space-y-2" data-demo="memory-pins">
+  <div class="bui-ext-pin-pop overflow-hidden rounded-card bg-surface shadow-card" data-pin>
+    <div class="primitive-card-pad flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-[12.5px] font-semibold text-ink">Weekend churn window</span>
+          <span class="rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-medium text-accent-ink">Pinned</span>
+        </div>
+        <p class="mt-1 text-[12px] leading-relaxed text-ink-2">Churn pistachio batches before Saturday 10am for afternoon service peaks.</p>
+        <p class="mt-1.5 text-[10.5px] text-ink-3">Source: ops_playbook · updated 2d ago</p>
+      </div>
+      <button type="button" aria-label="Unpin" class="primitive-icon-button text-ink-3 hover:bg-hover hover:text-ink" data-pin-toggle>${ICONS.x}</button>
+    </div>
+  </div>
+  <div class="bui-ext-pin-pop overflow-hidden rounded-card bg-surface shadow-card" style="animation-delay:60ms" data-pin>
+    <div class="primitive-card-pad flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-[12.5px] font-semibold text-ink">Cone lead time</span>
+          <span class="rounded-full bg-field px-2 py-0.5 text-[10px] font-medium text-ink-3">Auto</span>
+        </div>
+        <p class="mt-1 text-[12px] leading-relaxed text-ink-2"><code class="rounded bg-field px-1 font-mono text-[11px]">cone_king</code> ships in 7 days — reorder at 40% stock.</p>
+      </div>
+      <button type="button" aria-label="Pin" class="primitive-icon-button text-ink-3 hover:bg-hover hover:text-ink" data-pin-toggle>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10V4h6v6"/><path d="M9 10h6"/></svg>
+      </button>
+    </div>
+  </div>
+  <button type="button" class="flex w-full items-center justify-center gap-1.5 rounded-control border border-dashed border-line-strong py-2 text-[12px] text-ink-3 transition-colors duration-150 hover:border-line hover:bg-hover hover:text-ink">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    Pin new fact from chat
+  </button>
+</div>`,
+
+    "confidence-gate": `
+<div class="w-full max-w-95 overflow-hidden rounded-card bg-surface shadow-card" data-demo="confidence-gate">
+  <div class="primitive-card-pad">
+    <span class="text-[13px] font-semibold text-ink">Approve restock for pistachio?</span>
+    <p class="mt-1.5 min-h-10 text-[13px] leading-relaxed text-ink-2">Agent confidence is below your threshold for autonomous PO creation.</p>
+    <div class="mt-3 flex items-center gap-2">
+      <span class="flex items-end gap-0.5" data-confidence-bars>
+        <span class="w-1 rounded-full bg-orange" style="height:10px"></span>
+        <span class="w-1 rounded-full bg-orange" style="height:10px"></span>
+        <span class="w-1 rounded-full bg-line-strong" style="height:10px"></span>
+      </span>
+      <span class="text-[12.5px] font-medium text-orange" data-confidence-label>Medium confidence</span>
+    </div>
+  </div>
+  <div class="grid transition-[grid-template-rows,opacity] duration-300" style="grid-template-rows:0fr;opacity:0" data-alt-panel>
+    <div class="overflow-hidden">
+      <div class="border-t border-line bg-inset px-2 py-2">
+        <p class="px-1.5 pb-1 text-[11px] font-medium text-ink-3">Safer alternatives</p>
+        <button type="button" class="flex w-full items-center gap-2.5 rounded-control px-1.5 py-1.5 text-left hover:bg-hover">
+          <span class="flex items-end gap-0.5"><span class="w-1 rounded-full bg-green" style="height:10px"></span><span class="w-1 rounded-full bg-green" style="height:10px"></span><span class="w-1 rounded-full bg-green" style="height:10px"></span></span>
+          <span class="min-w-0 flex-1 truncate text-[12.5px] text-ink">Draft PO for review only</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="primitive-card-footer flex items-center justify-between gap-3 border-t border-line bg-inset">
+    <button type="button" aria-expanded="false" class="h-7 rounded-control px-2.5 text-[12.5px] font-medium shadow-btn bg-surface text-ink hover:bg-hover transition-transform active:scale-[0.96]" data-alt-toggle>Alternatives</button>
+    <span class="flex gap-2">
+      <button type="button" class="h-7 rounded-control px-2.5 text-[12.5px] font-medium text-ink-2 hover:bg-hover">Reject</button>
+      <button type="button" class="h-7 rounded-control px-3 text-[12.5px] font-medium bg-accent text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_0_1px_rgba(16,24,40,0.12),0_1px_2px_rgba(16,24,40,0.1)] active:scale-[0.96]">Override &amp; accept</button>
+    </span>
+  </div>
+</div>`,
+
+    "model-router": `
+<div class="w-full max-w-95" data-demo="model-router">
+  <div class="overflow-hidden rounded-[14px] border border-line bg-surface shadow-card">
+    <div class="flex items-center justify-between border-b border-line px-3 py-2">
+      <span class="text-[12.5px] font-medium text-ink">Route request</span>
+      <span class="flex items-center gap-1.5 text-[11px] text-ink-3"><span class="size-1.5 rounded-full bg-green"></span> Auto</span>
+    </div>
+    <div class="flex flex-col p-1" data-model-list>
+      <button type="button" aria-pressed="true" class="flex items-center gap-3 rounded-control px-2.5 py-2 text-left transition-colors duration-150 bg-field" data-model-option="vanilla">
+        <span class="flex size-8 items-center justify-center rounded-[8px] bg-surface shadow-btn text-[11px] font-semibold text-accent-ink">V1</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-[12.5px] font-medium text-ink">Vanilla 1</p>
+          <p class="text-[11px] text-ink-3">Balanced · 1.2s avg latency</p>
+        </div>
+        <span class="rounded-full bg-green-tint px-2 py-0.5 text-[10px] font-medium text-green">Fast</span>
+      </button>
+      <button type="button" aria-pressed="false" class="flex items-center gap-3 rounded-control px-2.5 py-2 text-left transition-colors duration-150 hover:bg-hover-2" data-model-option="mint">
+        <span class="flex size-8 items-center justify-center rounded-[8px] bg-surface shadow-btn text-[11px] font-semibold text-ink-2">M2</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-[12.5px] font-medium text-ink">Mint 2</p>
+          <p class="text-[11px] text-ink-3">Reasoning · 4.8s avg latency</p>
+        </div>
+        <span class="rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-medium text-accent-ink">Deep</span>
+      </button>
+      <button type="button" aria-pressed="false" class="flex items-center gap-3 rounded-control px-2.5 py-2 text-left transition-colors duration-150 hover:bg-hover-2" data-model-option="sorbet">
+        <span class="flex size-8 items-center justify-center rounded-[8px] bg-surface shadow-btn text-[11px] font-semibold text-ink-2">S0</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-[12.5px] font-medium text-ink">Sorbet 0</p>
+          <p class="text-[11px] text-ink-3">Ultra fast · 420ms avg latency</p>
+        </div>
+        <span class="rounded-full bg-field px-2 py-0.5 text-[10px] font-medium text-ink-3">Lite</span>
+      </button>
+    </div>
+    <div class="border-t border-line bg-inset px-3 py-2">
+      <p class="text-[11.5px] text-ink-2" data-model-hint>Routing <span class="font-medium text-ink">inventory query</span> to Vanilla 1</p>
+    </div>
+  </div>
+</div>`,
+  };
+
+  const VARIANT_CONTENT = {
+    "error-recovery": {
+      Timeout: {
+        label: "POS export timed out",
+        body: "Could not read <code class=\"rounded-md bg-accent-tint px-1.5 py-0.5 font-mono text-[11px] text-accent-ink\">weekend_sales.csv</code> after 30s.",
+      },
+      Auth: {
+        label: "Supplier API unauthorized",
+        body: "Token for <code class=\"rounded-md bg-accent-tint px-1.5 py-0.5 font-mono text-[11px] text-accent-ink\">cone_king</code> expired. Reconnect to continue.",
+      },
+      "Rate limit": {
+        label: "Rate limit reached",
+        body: "POS sync paused — 120 requests/min exceeded. Retry in <span class=\"font-mono text-[11.5px]\">42s</span>.",
+      },
+    },
+    "live-toasts": {
+      Success: { progress: "100%", color: "green" },
+      Warning: { progress: "68%", color: "orange" },
+      Error: { progress: "12%", color: "red" },
+    },
+    "confidence-gate": {
+      High: { level: 3, label: "High confidence", class: "text-green" },
+      Medium: { level: 2, label: "Medium confidence", class: "text-orange" },
+      Blocked: { level: 1, label: "Blocked — review required", class: "text-red" },
+    },
+  };
 
   function removeMarketing() {
     document.querySelectorAll("section.px-8.py-14").forEach((el) => {
@@ -49,116 +420,11 @@
     document.querySelectorAll('a[href*="cal.com"]').forEach((el) => el.remove());
   }
 
-  function showcaseSection(primitive, innerHtml, variants) {
-    const variantsHtml =
-      variants && variants.length
-        ? `<div class="absolute bottom-2.5 left-1/2 flex -translate-x-1/2 rounded-full bg-field p-0.5">${variants
-            .map(
-              (v, i) =>
-                `<button type="button" class="rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 ${i === 0 ? "bg-surface text-ink shadow-btn" : "text-ink-3 hover:text-ink-2"}">${v}</button>`,
-            )
-            .join("")}</div>`
-        : "";
-
-    return `
-<section id="${primitive.id}" class="primitive-showcase group flex w-full scroll-mt-8 flex-col border-b border-dashed border-line px-8 py-10">
-  <div class="mb-3 flex items-start gap-2 sm:items-baseline">
-    <span class="mt-0.5 font-mono text-[11px] text-ink-3 tabular-nums sm:mt-0">${primitive.number}</span>
-    <div class="min-w-0 sm:flex sm:items-baseline sm:gap-2">
-      <h3 class="whitespace-nowrap text-[13px] font-semibold text-ink">${primitive.title}</h3>
-      <p class="mt-0.5 text-[12.5px] text-ink-3 text-pretty sm:mt-0 sm:truncate">${primitive.caption}</p>
-    </div>
-  </div>
-  <div class="primitive-demo-surface relative flex items-center justify-center overflow-hidden rounded-window bg-canvas p-3 shadow-hairline" style="min-height:272px">
-    <div class="w-full max-w-120 [&>*]:mx-auto">${innerHtml}</div>
-    ${variantsHtml}
-    <div class="absolute top-3 right-3 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
-      <button aria-label="Copy code" class="flex size-7 items-center justify-center rounded-control bg-surface shadow-btn transition-colors duration-100 hover:bg-hover text-ink-3 hover:text-ink">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-      </button>
-    </div>
-  </div>
-</section>`;
-  }
-
-  const DEMOS = {
-    "error-recovery": `
-      <div class="w-full max-w-95 rounded-window bg-surface p-4 shadow-hairline">
-        <div class="flex items-start gap-3">
-          <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-tint text-red">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-          </span>
-          <div class="min-w-0">
-            <p class="text-[13px] font-medium text-ink">POS export timed out</p>
-            <p class="mt-1 text-[12.5px] text-ink-2">The agent couldn't read <code class="rounded bg-field px-1 font-mono text-[11px]">weekend_sales.csv</code>. Retry or switch to the cached export.</p>
-            <div class="mt-3 flex gap-2">
-              <button type="button" class="rounded-full bg-ink px-3 py-1 text-[12px] font-medium text-surface">Retry</button>
-              <button type="button" class="rounded-full bg-field px-3 py-1 text-[12px] text-ink-2">Use cache</button>
-            </div>
-          </div>
-        </div>
-      </div>`,
-    "toast-alert": `
-      <div class="flex w-full max-w-95 flex-col gap-2">
-        <div class="flex items-center gap-2 rounded-window bg-surface px-3 py-2 shadow-raised">
-          <span class="flex size-6 items-center justify-center rounded-full bg-green-tint text-green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="text-[12.5px] text-ink">Reorder draft saved for Aurora Scoops</span>
-        </div>
-        <div class="flex items-center gap-2 rounded-window bg-surface px-3 py-2 shadow-raised">
-          <span class="flex size-6 items-center justify-center rounded-full bg-orange-tint text-orange"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/></svg></span>
-          <span class="text-[12.5px] text-ink">Mint chip velocity is below threshold</span>
-        </div>
-      </div>`,
-    "file-attachments": `
-      <div class="flex w-full max-w-95 flex-wrap gap-2">
-        <div class="flex items-center gap-2 rounded-control bg-surface px-2.5 py-1.5 shadow-hairline">
-          <span class="rounded bg-field px-1.5 py-0.5 font-mono text-[10px] text-ink-3">PDF</span>
-          <span class="text-[12.5px] text-ink">menu_q3_draft.pdf</span>
-          <span class="text-[11px] text-ink-3">1.2 MB</span>
-        </div>
-        <div class="flex items-center gap-2 rounded-control bg-surface px-2.5 py-1.5 shadow-hairline">
-          <span class="rounded bg-field px-1.5 py-0.5 font-mono text-[10px] text-ink-3">CSV</span>
-          <span class="text-[12.5px] text-ink">flavor_velocity.csv</span>
-          <span class="text-[11px] text-ink-3">84 KB</span>
-        </div>
-        <button type="button" class="flex size-8 items-center justify-center rounded-control bg-field text-ink-3 hover:bg-hover hover:text-ink">+</button>
-      </div>`,
-    "response-feedback": `
-      <div class="w-full max-w-95 space-y-3">
-        <p class="text-[12.5px] leading-relaxed text-ink">Pistachio should lead the weekend menu — demand peaks after 2pm at Kumo Creamery.</p>
-        <div class="flex items-center gap-1">
-          <button type="button" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 hover:bg-hover"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
-          <button type="button" class="flex size-8 items-center justify-center rounded-full bg-field text-ink-2 hover:bg-hover"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
-          <span class="ml-2 text-[11.5px] text-ink-3">Was this helpful?</span>
-        </div>
-      </div>`,
-    "agent-timeline": `
-      <div class="w-full max-w-95">
-        <div class="relative ml-2 space-y-3 pl-4">
-          <span class="absolute left-[3px] top-1 bottom-1 w-px bg-line"></span>
-          <div class="relative"><span class="absolute -left-[13px] top-1.5 size-2 rounded-full bg-green"></span><p class="text-[12.5px] font-medium text-ink">Matched suppliers</p><p class="text-[11.5px] text-ink-3">12 records · 0.8s</p></div>
-          <div class="relative"><span class="absolute -left-[13px] top-1.5 size-2 rounded-full bg-accent"></span><p class="text-[12.5px] font-medium text-ink">Scoring stockout risk</p><p class="text-[11.5px] text-ink-3">68% confidence · running</p></div>
-          <div class="relative"><span class="absolute -left-[13px] top-1.5 size-2 rounded-full bg-field border border-line"></span><p class="text-[12.5px] text-ink-2">Draft supplier emails</p><p class="text-[11.5px] text-ink-3">queued</p></div>
-        </div>
-      </div>`,
-    "memory-pins": `
-      <div class="w-full max-w-95 space-y-2">
-        <div class="rounded-window bg-surface p-3 shadow-hairline">
-          <div class="flex items-center justify-between"><span class="text-[12px] font-medium text-ink">Weekend churn window</span><span class="text-[10px] text-accent">Pinned</span></div>
-          <p class="mt-1 text-[12px] text-ink-2">Churn pistachio batches before Saturday 10am for afternoon service.</p>
-        </div>
-        <div class="rounded-window bg-surface p-3 shadow-hairline">
-          <div class="flex items-center justify-between"><span class="text-[12px] font-medium text-ink">Cone lead time</span><span class="text-[10px] text-ink-3">Auto</span></div>
-          <p class="mt-1 text-[12px] text-ink-2">cone_king ships in 7 days — reorder at 40% stock.</p>
-        </div>
-      </div>`,
-  };
-
   function injectNav() {
     const nav = document.querySelector("nav[aria-label='Components'] ul");
-    if (!nav || nav.dataset.extensions) return;
-    nav.dataset.extensions = "true";
+    if (!nav) return;
     NEW_PRIMITIVES.forEach((p) => {
+      if (nav.querySelector(`a[href="#${p.id}"]`)) return;
       const li = document.createElement("li");
       li.innerHTML = `<a href="#${p.id}" class="relative z-10 flex items-center rounded-[7px] px-2 py-[5px] text-[12.5px] transition-colors duration-150 text-ink-2 hover:text-ink">${p.title}</a>`;
       nav.appendChild(li);
@@ -167,29 +433,238 @@
 
   function injectSections() {
     const col = document.querySelector(".min-w-0 > .flex.w-full.flex-col");
-    if (!col || col.dataset.extensions) return;
-    col.dataset.extensions = "true";
-    const html = NEW_PRIMITIVES.map((p) => showcaseSection(p, DEMOS[p.id], null)).join("");
-    col.insertAdjacentHTML("beforeend", html);
+    if (!col) return;
+    const html = NEW_PRIMITIVES
+      .filter((p) => !col.querySelector(`#${p.id}`))
+      .map((p, i) => showcaseSection(p, DEMOS[p.id], 240 + i * 40))
+      .join("");
+    if (html) col.insertAdjacentHTML("beforeend", html);
+  }
+
+  function wireVariantBars() {
+    document.querySelectorAll(".bui-ext-section").forEach((section) => {
+      const id = section.dataset.extId;
+      const bar = section.querySelector(".bui-ext-variants");
+      if (!bar) return;
+      bar.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          bar.querySelectorAll("button").forEach((b) => {
+            b.className =
+              "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 text-ink-3 hover:text-ink-2";
+          });
+          btn.className =
+            "rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 bg-surface text-ink shadow-btn";
+          applyVariant(id, btn.dataset.variant, section);
+        });
+      });
+    });
+  }
+
+  function applyVariant(id, variant, section) {
+    if (id === "error-recovery" && VARIANT_CONTENT["error-recovery"][variant]) {
+      const data = VARIANT_CONTENT["error-recovery"][variant];
+      const label = section.querySelector("[data-state-label]");
+      const body = section.querySelector("[data-state-body]");
+      if (label) label.textContent = data.label;
+      if (body) body.innerHTML = data.body;
+    }
+    if (id === "live-toasts" && VARIANT_CONTENT["live-toasts"][variant]) {
+      const data = VARIANT_CONTENT["live-toasts"][variant];
+      const bar = section.querySelector("[data-toast-progress]");
+      if (bar) {
+        bar.style.width = data.progress;
+        const colorClass =
+          data.color === "green" ? "bg-green" : data.color === "orange" ? "bg-orange" : "bg-red";
+        bar.className = `h-full rounded-full transition-all duration-500 ${colorClass}`;
+      }
+    }
+    if (id === "confidence-gate" && VARIANT_CONTENT["confidence-gate"][variant]) {
+      const data = VARIANT_CONTENT["confidence-gate"][variant];
+      const bars = section.querySelectorAll("[data-confidence-bars] span");
+      const label = section.querySelector("[data-confidence-label]");
+      bars.forEach((bar, i) => {
+        bar.className = `w-1 rounded-full transition-colors duration-300 ${i < data.level ? (data.level === 3 ? "bg-green" : data.level === 2 ? "bg-orange" : "bg-red") : "bg-line-strong"}`;
+        bar.style.height = "10px";
+      });
+      if (label) {
+        label.textContent = data.label;
+        label.className = `text-[12.5px] font-medium ${data.class}`;
+      }
+    }
+    if (id === "model-router") {
+      const hint = section.querySelector("[data-model-hint]");
+      const map = {
+        Auto: "inventory query",
+        Fast: "quick lookup",
+        Reasoning: "multi-step forecast",
+      };
+      if (hint) hint.innerHTML = `Routing <span class="font-medium text-ink">${map[variant] || "request"}</span> via ${variant} policy`;
+    }
+  }
+
+  function wireInteractivity() {
+    document.querySelectorAll("[data-retry-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const spin = btn.querySelector("[data-retry-spin]");
+        const label = btn.querySelector("[data-retry-label]");
+        const meta = btn.closest("[data-demo]").querySelector("[data-retry-meta]");
+        if (spin) spin.classList.remove("hidden");
+        if (label) label.textContent = "Retrying…";
+        btn.disabled = true;
+        setTimeout(() => {
+          if (spin) spin.classList.add("hidden");
+          if (label) label.textContent = "Retry export";
+          btn.disabled = false;
+          if (meta) meta.textContent = "Attempt 2 of 3";
+          const stateLabel = btn.closest("[data-demo]").querySelector("[data-state-label]");
+          if (stateLabel) stateLabel.textContent = "Export recovered";
+        }, 1400);
+      });
+    });
+
+    document.querySelectorAll("[data-dismiss-toast]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const toast = btn.closest("[data-toast]");
+        if (toast) {
+          toast.style.transition = "opacity 200ms ease, transform 200ms ease";
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(-4px)";
+          setTimeout(() => toast.remove(), 200);
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-remove-chip]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const chip = btn.closest("[data-attachment-chip]");
+        if (chip) {
+          chip.style.transition = "opacity 150ms ease, transform 150ms ease";
+          chip.style.opacity = "0";
+          chip.style.transform = "scale(0.96)";
+          setTimeout(() => chip.remove(), 150);
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-rating]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const row = btn.closest("[data-rating-row]");
+        const panel = btn.closest("[data-demo]").querySelector("[data-correction-panel]");
+        const hint = btn.closest("[data-demo]").querySelector("[data-rating-hint]");
+        row.querySelectorAll("[data-rating]").forEach((b) => {
+          b.setAttribute("aria-pressed", "false");
+          b.classList.remove("bg-accent-tint", "text-accent-ink");
+          b.classList.add("bg-field", "text-ink-2");
+        });
+        btn.setAttribute("aria-pressed", "true");
+        btn.classList.remove("bg-field", "text-ink-2");
+        btn.classList.add("bg-accent-tint", "text-accent-ink");
+        if (hint) hint.textContent = btn.dataset.rating === "up" ? "Thanks for the feedback" : "We'll improve this";
+        if (panel && btn.dataset.rating === "down") {
+          panel.style.gridTemplateRows = "1fr";
+          panel.style.opacity = "1";
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-trace-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!expanded));
+        const body = btn.closest("[data-demo]").querySelector("[data-trace-body]");
+        const chevron = btn.querySelector("[data-trace-chevron]");
+        if (body) {
+          body.style.gridTemplateRows = expanded ? "0fr" : "1fr";
+          body.style.opacity = expanded ? "0" : "1";
+        }
+        if (chevron) chevron.style.transform = expanded ? "rotate(-90deg)" : "rotate(0)";
+      });
+    });
+
+    document.querySelectorAll("[data-pin-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const pin = btn.closest("[data-pin]");
+        if (!pin) return;
+        pin.style.transition = "opacity 200ms ease, transform 200ms ease";
+        pin.style.opacity = "0";
+        pin.style.transform = "scale(0.98)";
+        setTimeout(() => pin.remove(), 200);
+      });
+    });
+
+    document.querySelectorAll("[data-alt-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!expanded));
+        const panel = btn.closest("[data-demo]").querySelector("[data-alt-panel]");
+        if (panel) {
+          panel.style.gridTemplateRows = expanded ? "0fr" : "1fr";
+          panel.style.opacity = expanded ? "0" : "1";
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-model-option]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const list = btn.closest("[data-model-list]");
+        list.querySelectorAll("[data-model-option]").forEach((b) => {
+          b.setAttribute("aria-pressed", "false");
+          b.classList.remove("bg-field");
+          b.classList.add("hover:bg-hover-2");
+        });
+        btn.setAttribute("aria-pressed", "true");
+        btn.classList.add("bg-field");
+        btn.classList.remove("hover:bg-hover-2");
+        const hint = btn.closest("[data-demo]").querySelector("[data-model-hint]");
+        const name = btn.querySelector("p.font-medium")?.textContent || "model";
+        if (hint) hint.innerHTML = `Routing <span class="font-medium text-ink">inventory query</span> to ${name}`;
+      });
+    });
+  }
+
+  function wireNavScroll() {
+    document.querySelectorAll("nav[aria-label='Components'] a[href^='#']").forEach((link) => {
+      if (link.dataset.extNav) return;
+      link.dataset.extNav = "true";
+      link.addEventListener("click", (e) => {
+        const id = link.getAttribute("href").slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
+  }
+
+  function ensureStylesheet() {
+    if (document.querySelector("link[data-bui-ext-css]")) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = BASE ? `${BASE}/custom-extensions.css` : "custom-extensions.css";
+    link.setAttribute("data-bui-ext-css", "true");
+    document.head.appendChild(link);
   }
 
   function run() {
     removeMarketing();
+    ensureStylesheet();
     injectNav();
     injectSections();
+    wireVariantBars();
+    wireInteractivity();
+    wireNavScroll();
   }
 
-  // Run after Next/React hydration to avoid mismatch errors (#418).
   function scheduleRun() {
     setTimeout(run, 0);
   }
 
-  // Defer scripts can run after window "load" when async chunks finish late.
   if (document.readyState === "complete") {
     scheduleRun();
   } else {
     window.addEventListener("load", scheduleRun, { once: true });
     document.addEventListener("DOMContentLoaded", scheduleRun, { once: true });
   }
-  setTimeout(run, 1500);
+  setTimeout(run, 2000);
 })();
