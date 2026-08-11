@@ -184,9 +184,12 @@
     setTimeout(run, 0);
   }
 
+  // Defer scripts can run after window "load" when async chunks finish late.
   if (document.readyState === "complete") {
     scheduleRun();
   } else {
     window.addEventListener("load", scheduleRun, { once: true });
+    document.addEventListener("DOMContentLoaded", scheduleRun, { once: true });
   }
+  setTimeout(run, 1500);
 })();
