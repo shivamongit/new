@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: beautiful-ui
+    runtime: static
+    buildCommand: cd beautiful-ui && pnpm install && pnpm build
+    staticPublishPath: beautiful-ui/out
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
