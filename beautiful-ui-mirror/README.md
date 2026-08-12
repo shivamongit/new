@@ -1,13 +1,20 @@
-# Beautiful UI — Official Site Mirror
+# Stitch UI — Component Showcase
 
-Static mirror of [beautiful-ui-five.vercel.app](https://beautiful-ui-five.vercel.app) for hosting when the original deployment is inaccessible.
+Glass-dark primitive library deployed at [https://shivamongit.github.io/new/](https://shivamongit.github.io/new/).
 
-Built by [Turbo Design](https://turbodesign.co/). This folder is deployed to GitHub Pages via CI.
+Uses the NovaDock **Stitch** design language (aurora background, cyan glow, Space Grotesk / Geist) with 27 interactive component showcases.
 
-To refresh the mirror:
+## Files
+
+- `index.html` — Stitch shell + hydrated showcases (built by `stitch/build-index.mjs`)
+- `stitch/` — Theme, aurora shader, layout scripts
+- `legacy-mirror.html` — Previous flat layout mirror (reference)
+- `custom-extensions.js` — Primitives 20–27 with variant toggles
+
+Rebuild after editing legacy showcase HTML:
 
 ```bash
-wget -r -l 3 -np -nH -E -p -k -e robots=off \
-  --domains=beautiful-ui-five.vercel.app \
-  https://beautiful-ui-five.vercel.app/
+node stitch/build-index.mjs
 ```
+
+Deployed to GitHub Pages via `.github/workflows/deploy-beautiful-ui.yml`.
