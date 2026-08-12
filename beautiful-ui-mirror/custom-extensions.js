@@ -3,9 +3,9 @@
 
   const BASE = document.querySelector("base")?.href?.replace(/\/$/, "") || "";
   const BRAND = {
-    name: "Meridian UI",
-    tagline: "Crafted surfaces for intelligent products.",
-    title: "Meridian UI — Intelligent interface primitives",
+    name: "Stitch UI",
+    tagline: "Glass-dark primitives for agent products.",
+    title: "Stitch UI — Intelligent interface primitives",
     description:
       "A curated library of polished, copy-paste components for agents, approvals, streaming states, and everything AI products need to feel premium.",
   };
@@ -913,7 +913,7 @@
     if (document.querySelector("link[data-bui-ext-css]")) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = BASE ? `${BASE}/custom-extensions.css?v=5` : "custom-extensions.css?v=5";
+    link.href = BASE ? `${BASE}/custom-extensions.css?v=6` : "custom-extensions.css?v=6";
     link.setAttribute("data-bui-ext-css", "true");
     document.head.appendChild(link);
   }
