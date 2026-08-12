@@ -1,201 +1,228 @@
-/* Meridian UI — theme + motion layer */
+/* Prism Kit — strong motion + glass for showcases */
 
-:root {
-  --accent: #7c5cff;
-  --accent-ink: #6346e8;
-  --accent-tint: #7c5cff1a;
-  --page: #f8f7fc;
-  --stripe-bg: #f3f2f8;
-  --stripe: #7c5cff0a;
-}
-
-.dark {
-  --accent: #9d82ff;
-  --accent-ink: #b8a4ff;
-  --accent-tint: #9d82ff24;
-  --page: #14131a;
-  --stripe-bg: #101018;
-  --stripe: #9d82ff0e;
-}
-
-body {
-  background-color: var(--stripe-bg);
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-tint), transparent 70%),
-    repeating-linear-gradient(-45deg, transparent 0, transparent 7px, var(--stripe) 7px, var(--stripe) 8px);
-}
-
-main.relative.mx-auto.max-w-\[960px\] {
-  border-radius: 18px;
-  overflow: hidden;
+.pk-glass,
+.bui-ext-section .bg-surface,
+.bui-ext-section [class*="shadow-card"] {
+  background: rgba(16, 18, 24, 0.88) !important;
+  border: 1px solid rgba(0, 245, 255, 0.22) !important;
   box-shadow:
-    0 0 0 1px var(--line),
-    0 28px 56px -20px rgba(80, 60, 180, 0.18);
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 36px -8px rgba(0, 245, 255, 0.4),
+    0 18px 40px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(16px);
 }
 
-.dark main.relative.mx-auto.max-w-\[960px\] {
+.primitive-demo-surface {
+  transition:
+    transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 220ms ease,
+    border-color 220ms ease !important;
+}
+
+.primitive-showcase:hover .primitive-demo-surface,
+.primitive-showcase:focus-within .primitive-demo-surface {
+  transform: translateY(-5px);
+  border-color: rgba(0, 245, 255, 0.45) !important;
   box-shadow:
-    0 0 0 1px var(--line),
-    0 28px 56px -16px rgba(0, 0, 0, 0.55);
+    0 0 48px -10px rgba(0, 245, 255, 0.55),
+    0 24px 48px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Brand mark */
-.meridian-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: -4px;
+/* Variant pills — always visible, high z-index, obvious hover */
+.pk-variant-bar,
+.bui-ext-variants,
+.primitive-demo-surface > .absolute.bottom-2\.5,
+.primitive-demo-surface > div.absolute[class*="bottom"] {
+  z-index: 80 !important;
+  pointer-events: auto !important;
+  background: rgba(8, 10, 14, 0.92) !important;
+  border: 1px solid rgba(0, 245, 255, 0.28) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 20px -6px rgba(0, 245, 255, 0.35) !important;
+  padding: 4px !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(14px);
 }
 
-.meridian-logo-mark {
-  display: flex;
-  size: 52px;
-  width: 52px;
-  height: 52px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  background: linear-gradient(145deg, var(--accent) 0%, #5b8dff 55%, #3dd6c5 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 8px 20px -6px rgba(124, 92, 255, 0.55);
-  color: white;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
+.pk-variant-btn,
+.bui-ext-variants button,
+.primitive-demo-surface > div.absolute[class*="bottom"] button {
+  cursor: pointer !important;
+  color: #9bb !important;
+  pointer-events: auto !important;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 140ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 140ms ease !important;
 }
 
-.meridian-logo-word {
-  font-size: 15px;
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-  line-height: 1.1;
+.pk-variant-btn:hover,
+.bui-ext-variants button:hover,
+.primitive-demo-surface > div.absolute[class*="bottom"] button:hover {
+  color: #e9feff !important;
+  background: rgba(0, 245, 255, 0.18) !important;
+  transform: translateY(-1px) scale(1.04);
 }
 
-.meridian-logo-word span {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--ink-3);
-  letter-spacing: 0.02em;
+.pk-variant-btn:active,
+.bui-ext-variants button:active {
+  transform: scale(0.94) !important;
 }
 
-.meridian-hero-accent {
-  background: linear-gradient(120deg, var(--ink) 30%, var(--accent-ink) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.pk-variant-btn-active,
+.bui-ext-variants button.pk-variant-btn-active {
+  background: #00f5ff !important;
+  color: #003739 !important;
+  font-weight: 650 !important;
+  box-shadow: 0 0 16px -2px rgba(0, 245, 255, 0.7) !important;
 }
 
-/* Nav — hover pill + link feedback for ALL items including extensions */
+.pk-swapping {
+  opacity: 0.12 !important;
+  filter: blur(6px) !important;
+  transform: translateY(10px) scale(0.96) !important;
+}
+
+.pk-swap-in,
+.meridian-swap-in {
+  animation: pk-swap-in 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes pk-swap-in {
+  from {
+    opacity: 0.12;
+    filter: blur(6px);
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* Nav hover — CSS fallback so it never looks dead */
 nav[aria-label="Components"] ul {
   position: relative;
-}
-
-nav[aria-label="Components"] ul > span.pointer-events-none.absolute {
-  z-index: 0;
-  background: var(--hover) !important;
-  border-radius: 7px;
 }
 
 nav[aria-label="Components"] ul a {
   position: relative;
   z-index: 10;
+  border-radius: 8px !important;
   transition:
-    color 150ms ease,
-    background-color 150ms ease,
-    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms cubic-bezier(0.23, 1, 0.32, 1) !important;
 }
 
 nav[aria-label="Components"] ul a:hover,
 nav[aria-label="Components"] ul a:focus-visible {
-  color: var(--ink) !important;
+  color: #63f7ff !important;
+  background: rgba(0, 245, 255, 0.14) !important;
+  transform: translateX(3px);
 }
 
-nav[aria-label="Components"] ul a.meridian-nav-active {
-  font-weight: 500;
-  color: var(--ink) !important;
+nav[aria-label="Components"] ul a.meridian-nav-active,
+nav[aria-label="Components"] ul a.pk-nav-active {
+  color: #63f7ff !important;
+  font-weight: 600;
 }
 
-nav[aria-label="Components"] ul a.meridian-nav-ext {
-  border-left: 2px solid transparent;
-  padding-left: calc(0.5rem - 2px);
-}
-
-nav[aria-label="Components"] ul a.meridian-nav-ext.meridian-nav-active {
-  border-left-color: var(--accent);
-}
-
-/* Extension sections */
-.bui-ext-fade-up {
-  animation: fade-up 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-
-.bui-ext-section .primitive-demo-surface {
-  background: linear-gradient(180deg, var(--canvas) 0%, color-mix(in srgb, var(--canvas) 70%, var(--surface)) 100%);
-}
-
-.bui-ext-variants {
-  z-index: 30;
-  pointer-events: auto;
-  box-shadow: var(--shadow-btn);
-}
-
-.bui-ext-variants button {
-  cursor: pointer;
+.pk-nav-pill {
+  border-radius: 8px;
+  background: rgba(0, 245, 255, 0.16);
+  border: 1px solid rgba(0, 245, 255, 0.22);
+  opacity: 0;
   transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    top 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    height 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 140ms ease;
+  z-index: 0;
 }
 
-.bui-ext-variants button:active {
-  transform: scale(0.94);
+/* Loaders */
+.pk-pixel {
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  background: #00f5ff;
+  opacity: 0.2;
+  animation: pk-pixel 650ms ease-in-out infinite;
 }
 
-.bui-ext-variants button.meridian-variant-flash {
-  animation: meridian-variant-flash 380ms cubic-bezier(0.23, 1, 0.32, 1);
+@keyframes pk-pixel {
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px #00f5ff;
+  }
 }
 
-@keyframes meridian-variant-flash {
-  0% {
-    transform: scale(1);
+.pk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00f5ff;
+  animation: pk-bounce 0.9s ease-in-out infinite;
+}
+
+@keyframes pk-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
   }
   40% {
-    transform: scale(1.08);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-[data-demo] {
-  will-change: opacity, filter, transform;
-}
-
-.meridian-swapping {
-  opacity: 0.15 !important;
-  filter: blur(5px) !important;
-  transform: translateY(8px) scale(0.97) !important;
-}
-
-.meridian-swap-in {
-  animation: meridian-swap-in 450ms cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-
-@keyframes meridian-swap-in {
-  from {
-    opacity: 0.15;
-    filter: blur(5px);
-    transform: translateY(8px) scale(0.97);
-  }
-  to {
+    transform: translateY(-7px);
     opacity: 1;
-    filter: blur(0);
-    transform: translateY(0) scale(1);
   }
+}
+
+.pk-orbit {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 245, 255, 0.2);
+  border-top-color: #00f5ff;
+  animation: meridian-spin 0.8s linear infinite;
+}
+
+.pk-shimmer {
+  background-image: linear-gradient(90deg, #6a7a7a 35%, #e9feff 50%, #6a7a7a 65%);
+  background-size: 200% 100%;
+  animation: shimmer-text 1.4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+
+.pk-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(0, 245, 255, 0.12);
+  color: #63f7ff;
+  border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.pk-pill-ok {
+  background: rgba(52, 211, 153, 0.14);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.pk-pill-run {
+  background: rgba(0, 245, 255, 0.14);
+  color: #67e8f9;
+}
+
+.bui-ext-fade-up {
+  animation: fade-up 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 .bui-ext-toast-enter {
@@ -218,7 +245,7 @@ nav[aria-label="Components"] ul a.meridian-nav-ext.meridian-nav-active {
   }
   50% {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.2);
   }
 }
 
@@ -239,19 +266,26 @@ nav[aria-label="Components"] ul a.meridian-nav-ext.meridian-nav-active {
 @keyframes meridian-live-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.35);
+    box-shadow: 0 0 0 0 rgba(0, 245, 255, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(124, 92, 255, 0);
+    box-shadow: 0 0 0 8px rgba(0, 245, 255, 0);
   }
 }
 
-/* Shimmer text helper */
-.bui-ext-shimmer {
-  background-image: linear-gradient(90deg, var(--ink-3) 35%, var(--ink) 50%, var(--ink-3) 65%);
-  background-size: 200% 100%;
-  animation: shimmer-text 1.4s linear infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.bui-ext-section button,
+.bui-ext-section [data-rating],
+.bui-ext-section [data-model-option],
+.bui-ext-section [data-trace-toggle] {
+  cursor: pointer;
+  transition: transform 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+
+.bui-ext-section button:hover,
+.bui-ext-section [data-model-option]:hover {
+  transform: translateY(-1px);
+}
+
+.bui-ext-section button:active {
+  transform: scale(0.96);
 }

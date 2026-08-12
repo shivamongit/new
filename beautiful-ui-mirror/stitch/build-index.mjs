@@ -22,9 +22,9 @@ const head = `<!DOCTYPE html>
   <link rel="icon" href="icon.png" type="image/png"/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Geist:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="stitch/prism.css?v=2"/>
+  <link rel="stylesheet" href="stitch/prism.css?v=8"/>
   <link rel="stylesheet" href="_next/static/css/05982ab9f2554636.css"/>
-  <link rel="stylesheet" href="custom-extensions.css?v=7"/>
+  <link rel="stylesheet" href="custom-extensions.css?v=8"/>
   <link rel="preload" href="_next/static/media/bb3ef058b751a6ad-s.p.woff2" as="font" crossorigin="" type="font/woff2"/>
   <link rel="preload" href="_next/static/media/e4af272ccee01ff0-s.p.woff2" as="font" crossorigin="" type="font/woff2"/>
   <link rel="preload" as="script" fetchPriority="low" href="_next/static/chunks/webpack-dca0094f8340a94a.js"/>
@@ -55,10 +55,11 @@ const head = `<!DOCTYPE html>
 `;
 
 const foot = `
-  <script src="stitch/aurora.js?v=2"></script>
-  <script src="stitch/prism.js?v=2"></script>
+  <script src="stitch/aurora.js?v=8"></script>
+  <script src="stitch/prism.js?v=8"></script>
   ${legacyScripts}
-  <script src="custom-extensions.js?v=7"></script>
+  <script src="custom-extensions.js?v=8"></script>
+  <script src="stitch/interactions.js?v=8"></script>
 </body>
 </html>
 `;

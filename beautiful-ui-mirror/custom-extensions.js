@@ -85,10 +85,10 @@
 
   function variantBar(variants, active = 0) {
     if (!variants?.length) return "";
-    return `<div class="absolute bottom-2.5 left-1/2 flex -translate-x-1/2 rounded-full bg-field p-0.5 bui-ext-variants">${variants
+    return `<div class="absolute bottom-2.5 left-1/2 flex -translate-x-1/2 rounded-full p-0.5 bui-ext-variants pk-variant-bar">${variants
       .map(
         (v, i) =>
-          `<button type="button" data-variant="${v}" class="rounded-full px-2 py-0.5 text-[11.5px] font-medium transition-[background-color,color,box-shadow] duration-150 ${i === active ? "bg-surface text-ink shadow-btn" : "text-ink-3 hover:text-ink-2"}">${v}</button>`,
+          `<button type="button" data-variant="${v}" class="pk-variant-btn ${i === active ? "pk-variant-btn-active" : ""} rounded-full px-2.5 py-1 text-[11.5px] font-medium">${v}</button>`,
       )
       .join("")}</div>`;
   }
@@ -774,10 +774,14 @@
     });
   }
 
+  window.__prismApplyVariant = applyVariant;
+
   function applyBranding() {
     document.title = BRAND.title;
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", BRAND.description);
+
+    if (document.querySelector(".stitch-logo-mark")) return;
 
     const h1 = document.querySelector("aside h1");
     if (h1 && !h1.dataset.meridian) {
@@ -913,7 +917,7 @@
     if (document.querySelector("link[data-bui-ext-css]")) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = BASE ? `${BASE}/custom-extensions.css?v=7` : "custom-extensions.css?v=7";
+    link.href = BASE ? `${BASE}/custom-extensions.css?v=8` : "custom-extensions.css?v=8";
     link.setAttribute("data-bui-ext-css", "true");
     document.head.appendChild(link);
   }

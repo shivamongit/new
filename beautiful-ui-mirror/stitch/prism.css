@@ -204,9 +204,9 @@ main.stitch-legacy-main,
   z-index: 50 !important;
 }
 
-#stitch-legacy-main .min-w-0 {
+#stitch-legacy-main > main > div > .min-w-0 {
   margin-left: var(--stitch-sidebar);
-  max-width: 960px;
+  max-width: 1040px;
   padding: 24px 32px 64px;
 }
 
@@ -283,7 +283,7 @@ main.stitch-legacy-main,
 }
 
 /* Showcase column */
-#stitch-legacy-main .flex.w-full.flex-col {
+#stitch-legacy-main > main > div > .min-w-0 > .flex.w-full.flex-col {
   padding-top: 8px !important;
 }
 
@@ -293,10 +293,13 @@ main.stitch-legacy-main,
 }
 
 #stitch-legacy-main .primitive-demo-surface {
-  background: rgba(10, 10, 15, 0.55) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px !important;
-  backdrop-filter: blur(8px);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 245, 255, 0.08), transparent 55%),
+    rgba(10, 10, 15, 0.72) !important;
+  border: 1px solid rgba(0, 245, 255, 0.16);
+  border-radius: 18px !important;
+  backdrop-filter: blur(12px);
+  overflow: visible !important;
 }
 
 #stitch-legacy-main .primitive-showcase h3 {
@@ -380,7 +383,7 @@ nav[aria-label="Components"] ul > span.pointer-events-none.absolute {
     left: 0;
   }
 
-  #stitch-legacy-main .min-w-0 {
+  #stitch-legacy-main > main > div > .min-w-0 {
     margin-left: 0;
     max-width: none;
     padding: 16px 16px 48px;
