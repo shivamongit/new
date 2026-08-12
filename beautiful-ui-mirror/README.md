@@ -1,14 +1,14 @@
-# Stitch UI — Component Showcase
+# Prism Kit — Component Showcase
 
 Glass-dark primitive library deployed at [https://shivamongit.github.io/new/](https://shivamongit.github.io/new/).
 
-Uses the NovaDock **Stitch** design language (aurora background, cyan glow, Space Grotesk / Geist) with 27 interactive component showcases.
+Aurora background, cyan glow, Space Grotesk / Geist typography — 27 interactive component showcases for agent UIs.
 
 ## Files
 
-- `index.html` — Stitch shell + hydrated showcases (built by `stitch/build-index.mjs`)
+- `index.html` — Shell + hydrated showcases (built by `stitch/build-index.mjs`)
 - `stitch/` — Theme, aurora shader, layout scripts
-- `legacy-mirror.html` — Previous flat layout mirror (reference)
+- `legacy-mirror.html` — Previous flat layout (reference)
 - `custom-extensions.js` — Primitives 20–27 with variant toggles
 
 Rebuild after editing legacy showcase HTML:
