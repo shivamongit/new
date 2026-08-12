@@ -2,6 +2,13 @@
   "use strict";
 
   const BASE = document.querySelector("base")?.href?.replace(/\/$/, "") || "";
+  const BRAND = {
+    name: "Meridian UI",
+    tagline: "Crafted surfaces for intelligent products.",
+    title: "Meridian UI — Intelligent interface primitives",
+    description:
+      "A curated library of polished, copy-paste components for agents, approvals, streaming states, and everything AI products need to feel premium.",
+  };
 
   const NEW_PRIMITIVES = [
     {
@@ -135,7 +142,7 @@
         <button type="button" class="h-7 rounded-control px-2.5 text-[12.5px] font-medium shadow-btn bg-surface text-ink-2 hover:bg-hover transition-[background-color,transform] duration-100 active:scale-[0.96]" data-use-cache>Use cache</button>
         <button type="button" class="h-7 rounded-control px-3 text-[12.5px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_0_1px_rgba(16,24,40,0.12),0_1px_2px_rgba(16,24,40,0.1)] bg-accent text-white transition-[background-color,transform] duration-150 active:scale-[0.96] flex items-center gap-1.5" data-retry-btn>
           <span data-retry-label>Retry export</span>
-          <span class="hidden size-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" data-retry-spin></span>
+          <span class="hidden size-3.5 rounded-full border-2 border-white/30 border-t-white meridian-spin" data-retry-spin></span>
         </button>
       </span>
     </div>
@@ -258,7 +265,7 @@
         </div>
         <div class="flex items-center gap-2 rounded-control px-1.5 py-1 text-[12px] bg-accent-tint/40">
           <span class="relative flex size-5 items-center justify-center">
-            <svg width="18" height="18" class="absolute animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="var(--line)" stroke-width="2"/><circle cx="12" cy="12" r="11" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="19 50"/></svg>
+            <svg width="18" height="18" class="absolute meridian-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="var(--line)" stroke-width="2"/><circle cx="12" cy="12" r="11" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="19 50"/></svg>
           </span>
           <span class="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink">score_stockout_risk</span>
           <span class="rounded-full bg-field px-2 py-0.5 text-[10.5px] font-medium text-accent-ink">running</span>
@@ -426,7 +433,7 @@
     NEW_PRIMITIVES.forEach((p) => {
       if (nav.querySelector(`a[href="#${p.id}"]`)) return;
       const li = document.createElement("li");
-      li.innerHTML = `<a href="#${p.id}" class="relative z-10 flex items-center rounded-[7px] px-2 py-[5px] text-[12.5px] transition-colors duration-150 text-ink-2 hover:text-ink">${p.title}</a>`;
+      li.innerHTML = `<a href="#${p.id}" data-bui-nav-link class="meridian-nav-ext relative z-10 flex items-center rounded-[7px] px-2 py-[5px] text-[12.5px] transition-colors duration-150 text-ink-2 hover:text-ink">${p.title}</a>`;
       nav.appendChild(li);
     });
   }
@@ -454,17 +461,13 @@
   function flashDemo(section) {
     const demo = section.querySelector("[data-demo]");
     if (!demo) return;
-    demo.classList.remove("bui-ext-swap-in");
-    demo.style.opacity = "0.35";
-    demo.style.filter = "blur(3px)";
-    demo.style.transform = "translateY(4px)";
+    demo.classList.remove("meridian-swap-in");
+    demo.classList.add("meridian-swapping");
     requestAnimationFrame(() => {
       setTimeout(() => {
-        demo.style.opacity = "1";
-        demo.style.filter = "blur(0)";
-        demo.style.transform = "translateY(0)";
-        demo.classList.add("bui-ext-swap-in");
-      }, 120);
+        demo.classList.remove("meridian-swapping");
+        demo.classList.add("meridian-swap-in");
+      }, 140);
     });
   }
 
@@ -643,6 +646,9 @@
         const bar = variantBtn.closest(".bui-ext-variants");
         if (!section || !bar) return;
         setActiveVariantButton(bar, variantBtn);
+        variantBtn.classList.remove("meridian-variant-flash");
+        void variantBtn.offsetWidth;
+        variantBtn.classList.add("meridian-variant-flash");
         applyVariant(section.dataset.extId, variantBtn.dataset.variant, section);
         return;
       }
@@ -768,6 +774,125 @@
     });
   }
 
+  function applyBranding() {
+    document.title = BRAND.title;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", BRAND.description);
+
+    const h1 = document.querySelector("aside h1");
+    if (h1 && !h1.dataset.meridian) {
+      h1.dataset.meridian = "true";
+      h1.innerHTML = `<span class="meridian-hero-accent">${BRAND.name}</span> — ${BRAND.tagline}`;
+    }
+
+    const navLabel = document.querySelector("nav[aria-label='Components'] > p");
+    if (navLabel && !navLabel.dataset.meridian) {
+      navLabel.dataset.meridian = "true";
+      navLabel.textContent = "Primitives";
+    }
+
+    const logoImg = document.querySelector("aside img[alt]");
+    if (logoImg && !logoImg.dataset.meridian) {
+      logoImg.dataset.meridian = "true";
+      logoImg.style.display = "none";
+      const wrap = logoImg.parentElement;
+      if (wrap && !wrap.querySelector(".meridian-logo")) {
+        const brand = document.createElement("div");
+        brand.className = "meridian-logo";
+        brand.innerHTML = `
+          <div class="meridian-logo-mark meridian-live-pulse">M</div>
+          <div class="meridian-logo-word">${BRAND.name}<span>Interface kit</span></div>`;
+        wrap.insertBefore(brand, logoImg);
+      }
+    }
+  }
+
+  function setupNavHover() {
+    const nav = document.querySelector("nav[aria-label='Components']");
+    if (!nav || nav.dataset.meridianHover) return;
+    nav.dataset.meridianHover = "true";
+
+    const ul = nav.querySelector("ul");
+    if (!ul) return;
+
+    const pill =
+      ul.querySelector("span.pointer-events-none.absolute") ||
+      (() => {
+        const s = document.createElement("span");
+        s.setAttribute("aria-hidden", "true");
+        s.className =
+          "pointer-events-none absolute inset-x-0 rounded-[7px] bg-hover";
+        s.style.cssText =
+          "top:0;height:0;opacity:0;transition:top 220ms cubic-bezier(0.23,1,0.32,1), height 220ms cubic-bezier(0.23,1,0.32,1), opacity 150ms ease";
+        ul.prepend(s);
+        return s;
+      })();
+
+    let activeId = null;
+
+    function movePill(link) {
+      if (!link) return;
+      pill.style.top = `${link.offsetTop}px`;
+      pill.style.height = `${link.offsetHeight}px`;
+      pill.style.opacity = "1";
+    }
+
+    function hidePillToActive() {
+      const active = ul.querySelector("a.meridian-nav-active");
+      if (active) movePill(active);
+      else pill.style.opacity = "0";
+    }
+
+    ul.addEventListener("mouseover", (e) => {
+      const link = e.target.closest("a");
+      if (link && ul.contains(link)) movePill(link);
+    });
+
+    ul.addEventListener("mouseleave", () => hidePillToActive());
+
+    ul.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("focus", () => movePill(link));
+    });
+
+    window.__meridianSetActiveNav = (id) => {
+      activeId = id;
+      ul.querySelectorAll("a").forEach((a) => {
+        const on = a.getAttribute("href") === `#${id}`;
+        a.classList.toggle("meridian-nav-active", on);
+        a.classList.toggle("font-medium", on);
+        a.classList.toggle("text-ink", on);
+        a.classList.toggle("text-ink-2", !on);
+      });
+      if (!ul.matches(":hover")) {
+        const active = ul.querySelector(`a[href="#${id}"]`);
+        if (active) movePill(active);
+      }
+    };
+  }
+
+  function setupScrollSpy() {
+    if (window.__meridianScrollSpy) return;
+    window.__meridianScrollSpy = true;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && window.__meridianSetActiveNav) {
+            window.__meridianSetActiveNav(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px" },
+    );
+
+    function observeAll() {
+      document.querySelectorAll("section.primitive-showcase[id]").forEach((s) => observer.observe(s));
+    }
+
+    observeAll();
+    setInterval(observeAll, 3000);
+  }
+
   function wireNavScroll() {
     document.querySelectorAll("nav[aria-label='Components'] a[href^='#']").forEach((link) => {
       if (link.dataset.extNav) return;
@@ -778,6 +903,7 @@
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (window.__meridianSetActiveNav) window.__meridianSetActiveNav(id);
         }
       });
     });
@@ -787,7 +913,7 @@
     if (document.querySelector("link[data-bui-ext-css]")) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = BASE ? `${BASE}/custom-extensions.css` : "custom-extensions.css";
+    link.href = BASE ? `${BASE}/custom-extensions.css?v=5` : "custom-extensions.css?v=5";
     link.setAttribute("data-bui-ext-css", "true");
     document.head.appendChild(link);
   }
@@ -796,10 +922,13 @@
 
   function run() {
     removeMarketing();
+    applyBranding();
     ensureStylesheet();
     setupDelegation();
     injectNav();
     injectSections();
+    setupNavHover();
+    setupScrollSpy();
     if (!navWired) {
       wireNavScroll();
       navWired = true;

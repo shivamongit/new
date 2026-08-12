@@ -1,17 +1,209 @@
-/* Extension primitives — matches Beautiful UI motion tokens */
+/* Meridian UI — theme + motion layer */
+
+:root {
+  --accent: #7c5cff;
+  --accent-ink: #6346e8;
+  --accent-tint: #7c5cff1a;
+  --page: #f8f7fc;
+  --stripe-bg: #f3f2f8;
+  --stripe: #7c5cff0a;
+}
+
+.dark {
+  --accent: #9d82ff;
+  --accent-ink: #b8a4ff;
+  --accent-tint: #9d82ff24;
+  --page: #14131a;
+  --stripe-bg: #101018;
+  --stripe: #9d82ff0e;
+}
+
+body {
+  background-color: var(--stripe-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-tint), transparent 70%),
+    repeating-linear-gradient(-45deg, transparent 0, transparent 7px, var(--stripe) 7px, var(--stripe) 8px);
+}
+
+main.relative.mx-auto.max-w-\[960px\] {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 28px 56px -20px rgba(80, 60, 180, 0.18);
+}
+
+.dark main.relative.mx-auto.max-w-\[960px\] {
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 28px 56px -16px rgba(0, 0, 0, 0.55);
+}
+
+/* Brand mark */
+.meridian-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: -4px;
+}
+
+.meridian-logo-mark {
+  display: flex;
+  size: 52px;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--accent) 0%, #5b8dff 55%, #3dd6c5 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 8px 20px -6px rgba(124, 92, 255, 0.55);
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.meridian-logo-word {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.meridian-logo-word span {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+.meridian-hero-accent {
+  background: linear-gradient(120deg, var(--ink) 30%, var(--accent-ink) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Nav — hover pill + link feedback for ALL items including extensions */
+nav[aria-label="Components"] ul {
+  position: relative;
+}
+
+nav[aria-label="Components"] ul > span.pointer-events-none.absolute {
+  z-index: 0;
+  background: var(--hover) !important;
+  border-radius: 7px;
+}
+
+nav[aria-label="Components"] ul a {
+  position: relative;
+  z-index: 10;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+nav[aria-label="Components"] ul a:hover,
+nav[aria-label="Components"] ul a:focus-visible {
+  color: var(--ink) !important;
+}
+
+nav[aria-label="Components"] ul a.meridian-nav-active {
+  font-weight: 500;
+  color: var(--ink) !important;
+}
+
+nav[aria-label="Components"] ul a.meridian-nav-ext {
+  border-left: 2px solid transparent;
+  padding-left: calc(0.5rem - 2px);
+}
+
+nav[aria-label="Components"] ul a.meridian-nav-ext.meridian-nav-active {
+  border-left-color: var(--accent);
+}
+
+/* Extension sections */
 .bui-ext-fade-up {
   animation: fade-up 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
-.bui-ext-shimmer {
-  background-image: linear-gradient(
-    90deg,
-    var(--ink-3) 35%,
-    var(--ink) 50%,
-    var(--ink-3) 65%
-  );
-  background-size: 200% 100%;
-  animation: shimmer-text 1.4s linear infinite;
+.bui-ext-section .primitive-demo-surface {
+  background: linear-gradient(180deg, var(--canvas) 0%, color-mix(in srgb, var(--canvas) 70%, var(--surface)) 100%);
+}
+
+.bui-ext-variants {
+  z-index: 30;
+  pointer-events: auto;
+  box-shadow: var(--shadow-btn);
+}
+
+.bui-ext-variants button {
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bui-ext-variants button:active {
+  transform: scale(0.94);
+}
+
+.bui-ext-variants button.meridian-variant-flash {
+  animation: meridian-variant-flash 380ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes meridian-variant-flash {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+[data-demo] {
+  will-change: opacity, filter, transform;
+}
+
+.meridian-swapping {
+  opacity: 0.15 !important;
+  filter: blur(5px) !important;
+  transform: translateY(8px) scale(0.97) !important;
+}
+
+.meridian-swap-in {
+  animation: meridian-swap-in 450ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes meridian-swap-in {
+  from {
+    opacity: 0.15;
+    filter: blur(5px);
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bui-ext-toast-enter {
+  animation: fade-up 420ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.bui-ext-pin-pop {
+  animation: pop-in 320ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 .bui-ext-pulse-dot {
@@ -22,41 +214,44 @@
   0%,
   100% {
     opacity: 0.35;
-    transform: scale(0.92);
+    transform: scale(0.9);
   }
   50% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1.1);
   }
 }
 
-.bui-ext-toast-enter {
-  animation: fade-up 400ms cubic-bezier(0.23, 1, 0.32, 1) both;
+.meridian-spin {
+  animation: meridian-spin 1s linear infinite;
 }
 
-.bui-ext-trace-line {
-  transition: height 500ms cubic-bezier(0.23, 1, 0.32, 1);
+@keyframes meridian-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.bui-ext-swap-in {
-  transition:
-    opacity 320ms cubic-bezier(0.23, 1, 0.32, 1),
-    filter 320ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 320ms cubic-bezier(0.23, 1, 0.32, 1);
+.meridian-live-pulse {
+  animation: meridian-live-pulse 2s ease-in-out infinite;
 }
 
-[data-demo] {
-  transition:
-    opacity 320ms cubic-bezier(0.23, 1, 0.32, 1),
-    filter 320ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 320ms cubic-bezier(0.23, 1, 0.32, 1);
+@keyframes meridian-live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(124, 92, 255, 0);
+  }
 }
 
-.bui-ext-variants {
-  z-index: 20;
-  pointer-events: auto;
-}
-
-.bui-ext-variants button {
-  cursor: pointer;
+/* Shimmer text helper */
+.bui-ext-shimmer {
+  background-image: linear-gradient(90deg, var(--ink-3) 35%, var(--ink) 50%, var(--ink-3) 65%);
+  background-size: 200% 100%;
+  animation: shimmer-text 1.4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
