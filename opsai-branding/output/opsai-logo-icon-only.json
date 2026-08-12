@@ -1,0 +1,11 @@
+{
+  "id": "opsai-tool-native",
+  "model": "GEMINI_3_1_PRO",
+  "projectId": "5391439844235637781",
+  "stitchUrl": "https://stitch.withgoogle.com/projects/5391439844235637781",
+  "screenId": "673207d426a14d20885493e64487bdb2",
+  "title": "OpsAI App Icon Dark",
+  "imagePath": "output/opsai-logo-icon-only.png",
+  "durationMs": 76200,
+  "rationale": "I have designed the **OpsAI Visual Identity Asset Sheet**, focusing on the \"Horizontal Build Pipeline\" concept. \n\n### Design Rationale:\n*   **The Glyph**: Built as a literal translation of your product's value proposition. It visualizes the flow of an Azure DevOps build (horizontal stages) → identifying the failure point (the broken 3rd node) → tracing it directly to the cited log line (the curved diagnostic path).\n*   **Engineering Aesthetic**: Eschewed \"sparkles\" and \"spider webs\" for a clean, Vercel-inspired 2px vector weight that maintains its structural integrity at 16px.\n*   **Color Strategy**: Anchored in professional midnight navy (`#0A0E17`) and white, with electric blue (`#3B82F6`) reserved strictly for the functional diagnostic elements.\n*   **Asset Set**: Provided as a square icon and horizontal wordmark lockup, each optimized for both light and dark environments on plain, distraction-free backgrounds.\n\nThe result is a grounded, diagnostic identity that feels like a high-performance tool for build engineers."
+}
