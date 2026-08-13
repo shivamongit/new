@@ -1,0 +1,8 @@
+{
+  "screenId": "2f6d058888f247a3a1bfd4ded018ff9b",
+  "title": "OpsAI Azure DevOps Asset Sheet",
+  "projectId": "5391439844235637781",
+  "stitchUrl": "https://stitch.withgoogle.com/projects/5391439844235637781",
+  "durationMs": 37749,
+  "rationale": "I've created the **OpsAI Azure DevOps Asset Sheet**, specifically tailored to align with the engineering language of Azure Pipelines.\n\n### Design Rationale:\n- **Horizontal Pipeline Glyph**: Instead of a generic \"O,\" I've used a horizontal row of four rounded rectangles to mirror the actual stage view in Azure DevOps (Restore, Build, Test, Deploy).\n- **Failure Mapping**: Stage 3 (the build stage) is highlighted in ADO-specific red (#E74856) with a failure \"x\" marker, instantly communicating the tool's purpose: identifying build failures.\n- **Log Citation**: Below the pipeline, I've added thin horizontal lines representing CI/CD logs, with a single line highlighted in Azure Blue (#0078D4) to represent the specific log line citation OpsAI returns.\n- **Fluent Aesthetic**: The design uses 2px strokes and professional, restrained geometry consistent with Microsoft’s Fluent Design System and enterprise engineering tools.\n- **Asset Variations**: The sheet includes app icon tiles for dark/light modes and horizontal lockups with the \"OpsAI\" wordmark.\n\nThe assets are favicon-safe and optimized for high-density legibility within DevOps dashboards."
+}

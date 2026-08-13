@@ -1,0 +1,58 @@
+{
+  "product": "Spectra AI — Requirement Quality Engine",
+  "projectId": "17912602839836262882",
+  "stitchProjectUrl": "https://stitch.withgoogle.com/projects/17912602839836262882",
+  "generatedAt": "2026-08-04T08:15:22.037Z",
+  "concepts": [
+    {
+      "id": "01-prism-pillars",
+      "name": "Prism Pillars",
+      "story": "Eight quality pillars scored as a spectrum — clarity through unambiguity.",
+      "screenId": "658361036f514bba8e4cf8b1218e3a35",
+      "title": "Spectra AI Prism Mark",
+      "imagePath": "output/01-prism-pillars.png",
+      "durationMs": 89461,
+      "stitchRationale": "I've designed the professional logo presentation for Spectra AI. \n\nThe presentation features:\n- **Premium Prism Mark**: A geometric prism icon that refracts a beam into eight spectral bands, converging into a sharp checkmark to symbolize accuracy and insight.\n- **Enterprise Wordmark**: Paired with a clean, semibold geometric sans-serif for \"Spectra\" and a technical cyan-accented \"AI\" in monospace-style caps.\n- **Cinematic Canvas**: The entire lockup is centered on a solid dark charcoal backgroun"
+    },
+    {
+      "id": "02-scan-pipeline",
+      "name": "Spectral Scan",
+      "story": "Five-stage pipeline — document ingested, beam extracts and scores each requirement.",
+      "screenId": "5acd528dfee947a49c8a119a19490917",
+      "title": "Spectra AI Requirements Logo",
+      "imagePath": "output/02-scan-pipeline.png",
+      "durationMs": 111884,
+      "stitchRationale": "I've designed the new Spectra AI logo lockup and presented it on a clean design board.\n\n### Design Rationale:\n- **Symbolism**: The document silhouette represents the core domain of requirements engineering. The horizontal spectral beam passing through it signifies analysis and insight, with the \"node dots\" representing specific, extracted requirements (like FR-001 or FR-002).\n- **Aesthetic**: The design uses a flat, sharp vector style to convey precision and technical sophistication, suitable fo"
+    },
+    {
+      "id": "03-grade-ring",
+      "name": "Grade Ring",
+      "story": "0–100 score and A+–F grades — executive scorecard at a glance.",
+      "screenId": "bb609b2ce44a42c5b8904c39d11e751b",
+      "title": "Spectra AI Scorecard Logo",
+      "imagePath": "output/03-grade-ring.png",
+      "durationMs": 95039,
+      "stitchRationale": "I've created the new Spectra AI scorecard logo and presented it in a premium, executive-focused layout.\n\n### Design Rationale:\n- **Scorecard Mark**: The circular \"ring gauge\" design provides an immediate visual metaphor for audit and analytics performance. The \"S\" monogram is integrated into the gauge's arcs to maintain brand recognition while evolving the visual language.\n- **A+ Indicator**: A subtle tick at the top-right (95+ position) reinforces the \"executive scorecard\" feel, suggesting prec"
+    },
+    {
+      "id": "04-atomic-clarity",
+      "name": "Atomic Clarity",
+      "story": "Atomicity pillar — one fuzzy requirement refined into one verifiable statement.",
+      "screenId": "6e503d4523e44b9b9c158ef2a0f1f6e9",
+      "title": "Spectra AI Transformation Logo",
+      "imagePath": "output/04-atomic-clarity.png",
+      "durationMs": 107331,
+      "stitchRationale": "I've designed the new Spectra AI transformation logo and presented it on a clean, engineering-focused canvas.\n\n### Design Rationale:\n- **Transformation Metaphor**: The icon visually executes the \"clarification\" process—passing a fuzzy, ambiguous requirement through a spectral prism to emerge as a sharp, verified statement.\n- **Precision Palette**: Using a #121820 dark slate background allows the #22c55e green verification check to stand out as the \"success\" state, reinforcing ISO and IREB qualit"
+    },
+    {
+      "id": "05-ontology-constellation",
+      "name": "Rule Constellation",
+      "story": "21-rule ontology — interconnected rules across 8 pillars, single source of truth.",
+      "screenId": "ae78ff62d2ff47fe88865dbf7399034e",
+      "title": "Spectra AI Constellation Logo",
+      "imagePath": "output/05-ontology-constellation.png",
+      "durationMs": 208573,
+      "stitchRationale": "I've designed the Spectra AI logo presentation with a focus on sophisticated data-engine aesthetics. \n\n### Design Choices\n- **The Mark**: Created a constellation network of 21 nodes in a hexagonal arrangement. This symbolizes the \"many requirements, one engine\" concept, moving away from generic AI brain imagery toward a more deterministic, rule-based ontology aesthetic.\n- **Typography & Lockup**: \"Spectra\" is set in bold white for high-contrast authority, while \"AI\" is housed in a cyan pill badg"
+    }
+  ]
+}
