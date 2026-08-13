@@ -1,1 +1,6 @@
 node_modules/
+collected/
+list-projects.mjs
+probe-p3.mjs
+collect-last3.mjs
+compose-single-file.py
