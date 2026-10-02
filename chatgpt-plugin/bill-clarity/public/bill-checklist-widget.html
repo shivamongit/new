@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bill Clarity checklist</title>
+    <style>
+      :root {
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #0f172a;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        background: #f8fafc;
+      }
+      main {
+        max-width: 420px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+      }
+      .sub {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+      ul {
+        padding-left: 0;
+        list-style: none;
+        margin: 0;
+      }
+      li {
+        border-left: 4px solid #cbd5e1;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+      li.high {
+        border-left-color: #dc2626;
+      }
+      li.review {
+        border-left-color: #d97706;
+      }
+      li.action {
+        border-left-color: #2563eb;
+      }
+      .steps li {
+        border-left-color: #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h2>Bill screening results</h2>
+      <p class="sub">Educational only — not medical or legal advice.</p>
+      <ul id="flags"></ul>
+      <h2>Suggested next steps</h2>
+      <ul id="steps" class="steps"></ul>
+    </main>
+    <script type="module">
+      const flagsEl = document.querySelector("#flags");
+      const stepsEl = document.querySelector("#steps");
+
+      const render = (data) => {
+        const flags = data?.flags ?? [];
+        const steps = data?.nextSteps ?? [];
+        flagsEl.innerHTML = flags.length
+          ? flags
+              .map(
+                (f) =>
+                  `<li class="${f.severity || ""}"><strong>${f.title}</strong><br/>${f.detail}</li>`
+              )
+              .join("")
+          : "<li>No flags returned yet.</li>";
+        stepsEl.innerHTML = steps.length
+          ? steps.map((s) => `<li>${s}</li>`).join("")
+          : "<li>Ask ChatGPT to screen your bill or assess your rights.</li>";
+      };
+
+      let rpcId = 0;
+      const pending = new Map();
+      const rpcRequest = (method, params) =>
+        new Promise((resolve, reject) => {
+          const id = ++rpcId;
+          pending.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
+        });
+      const rpcNotify = (method, params) =>
+        window.parent.postMessage({ jsonrpc: "2.0", method, params }, "*");
+
+      window.addEventListener("message", (event) => {
+        if (event.source !== window.parent) return;
+        const msg = event.data;
+        if (!msg || msg.jsonrpc !== "2.0") return;
+        if (typeof msg.id === "number") {
+          const p = pending.get(msg.id);
+          if (!p) return;
+          pending.delete(msg.id);
+          msg.error ? p.reject(msg.error) : p.resolve(msg.result);
+          return;
+        }
+        if (msg.method === "ui/notifications/tool-result") {
+          render(msg.params?.structuredContent);
+        }
+      });
+
+      (async () => {
+        try {
+          await rpcRequest("ui/initialize", {
+            appInfo: { name: "bill-clarity", version: "0.1.0" },
+            appCapabilities: {},
+            protocolVersion: "2026-01-26",
+          });
+          rpcNotify("ui/notifications/initialized", {});
+        } catch (e) {
+          console.error(e);
+        }
+      })();
+    </script>
+  </body>
+</html>
