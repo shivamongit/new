@@ -8,6 +8,7 @@ import { MaterialIcon } from "./material-icon";
 const nav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
   { href: "/apps/new", label: "New deployment", icon: "rocket_launch" },
+  { href: "/reddit", label: "Reddit images", icon: "image" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
@@ -16,7 +17,7 @@ export function StitchSidebar() {
 
   return (
     <aside
-      className="fixed left-0 top-0 z-50 flex h-full w-[260px] flex-col border-r border-white/10 bg-[#0e0e12]/70 p-4 backdrop-blur-xl"
+      className="fixed left-0 top-0 z-50 flex h-full w-[260px] flex-col overflow-y-auto border-r border-white/10 bg-[#0e0e12]/70 p-4 backdrop-blur-xl"
     >
       <div className="mb-10 flex flex-col gap-2">
         <div className="flex items-center gap-3 px-2">
